@@ -13,6 +13,7 @@ package projectoss1;
 
 
 import java.sql.Date;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -24,79 +25,87 @@ import javafx.beans.property.StringProperty;
 public class ProcessTable {
     
     
-    private final SimpleIntegerProperty pid;
-    private final SimpleIntegerProperty arrivalTime;
-    private final SimpleIntegerProperty burstTime;
-    private final SimpleIntegerProperty finishTime;
-    private final SimpleIntegerProperty TA;
-    private final SimpleIntegerProperty waitTime;
-    private final SimpleIntegerProperty WTA;
+    private final StringProperty pid;
+    private final StringProperty arrivalTime;
+    private final StringProperty burstTime;
+    private final StringProperty finishTime;
+    private final StringProperty TA;
+    private final StringProperty waitTime;
+    private final StringProperty WTA;
     
 
-    public ProcessTable (int pid , int arrivalTime , int burstTime , int finishTime , int TA , int waitTime , int WTA ){
-         this.pid = new SimpleIntegerProperty(pid);
-         this.arrivalTime = new SimpleIntegerProperty(arrivalTime);
-         this.burstTime = new SimpleIntegerProperty(burstTime);
-         this.finishTime = new SimpleIntegerProperty(finishTime);
-         this.TA= new SimpleIntegerProperty(TA);
-         this.waitTime = new SimpleIntegerProperty(waitTime);
-         this.WTA = new SimpleIntegerProperty(WTA);
+    public ProcessTable (String pid , String arrivalTime , String burstTime , String finishTime , String TA , String waitTime , String WTA ){
+         this.pid = new SimpleStringProperty(pid);
+         this.arrivalTime = new SimpleStringProperty(arrivalTime);
+         this.burstTime = new SimpleStringProperty(burstTime);
+         this.finishTime = new SimpleStringProperty(finishTime);
+         this.TA= new SimpleStringProperty(TA);
+         this.waitTime = new SimpleStringProperty(waitTime);
+         this.WTA = new SimpleStringProperty(WTA);
          
     }   
     
-    public SimpleIntegerProperty getPid() {
-        return pid;
+    public String getPid() {
+        return pid.get();
     }
     
-    public void setPid(int value){
+    public void setPid(String value){
         pid.set(value);
     }
 
-    public SimpleIntegerProperty getArrivalTime() {
-        return arrivalTime;
+    public String getArrivalTime() {
+        return arrivalTime.get();
     }
 
-    public void setArrivalTime(int value){
+    public void setArrivalTime(String value){
         arrivalTime.set(value);
     }
     
-    public SimpleIntegerProperty getBurstTime() {
-        return burstTime;
+    public String getBurstTime() {
+        return burstTime.get();
     }
     
-    public void setBurstTime(int value){
+    public void setBurstTime(String value){
         burstTime.set(value);
     }
 
-    public SimpleIntegerProperty getFinishTime() {
-        return finishTime;
+    public String getFinishTime() {
+        return finishTime.get();
     }
 
-    public void setFinishTime(int value){
+    public void setFinishTime(String value){
         finishTime.set(value);
     }
     
-    public SimpleIntegerProperty getTA() {
-        return TA;
+    public String getTA() {
+        return TA.get();
     }
     
-    public void setTA(int value){
+    public void setTA(String value){
         TA.set(value);
     }
 
-    public SimpleIntegerProperty getWaitTime() {
-        return waitTime;
+    public String getWaitTime() {
+        return waitTime.get();
     }
     
-     public void setWaitTime(int value){
+     public void setWaitTime(String value){
         waitTime.set(value);
     }
 
-    public SimpleIntegerProperty getWTA() {
-        return WTA;
+    public String getWTA() {
+        return WTA.get();
     }
     
-     public void setWTA(int value){
+     public void setWTA(String value){
         WTA.set(value);
     }
+     public StringProperty pidProperty(){return pid;}
+   public StringProperty arrivalTimeProperty(){return arrivalTime;}
+   public StringProperty burstTimeProperty(){return burstTime;}
+   public StringProperty finishTimeProperty(){return finishTime;}
+   public StringProperty TAProperty(){return TA;}
+   public StringProperty waitTimeProperty(){return waitTime;}
+   public StringProperty WTAProperty(){return WTA;}
+   
 }
