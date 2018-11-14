@@ -22,7 +22,10 @@ import javax.swing.JOptionPane;
  *
  * @author user
  */
+
+
 public class FXMLDocumentController implements Initializable {
+    int loaySharmoot ;
       ArrayList<Process> processes;
     static ArrayList<Process> readyQueue;
     @FXML
