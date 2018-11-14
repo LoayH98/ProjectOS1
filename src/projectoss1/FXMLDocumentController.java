@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 
 
 public class FXMLDocumentController implements Initializable {
-    int loaySharmoot ;
+    int loaySharmoot1 ;
       ArrayList<Process> processes;
     static ArrayList<Process> readyQueue;
     @FXML
