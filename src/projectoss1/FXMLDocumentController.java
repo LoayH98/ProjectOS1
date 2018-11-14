@@ -10,12 +10,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javax.swing.JOptionPane;
 
 /**
@@ -31,18 +35,38 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label label;
     
-        @FXML
+    @FXML
     private Button readFileBtn;
 
     @FXML
     private TextField fileNameTxt;
         
+    
+    @FXML
+    private TableView<ProcessTable> Table;
+    @FXML
+    private TableColumn<ProcessTable, Integer > cpid;
+    @FXML
+    private TableColumn<ProcessTable, Integer > carrivalTime;
+    @FXML
+    private TableColumn<ProcessTable, Integer > cburstTime;
+    @FXML
+    private TableColumn<ProcessTable, Integer> cfinishTime;
+    @FXML
+    private TableColumn<ProcessTable, Integer> cTA;
+    @FXML
+    private TableColumn<ProcessTable, Integer> cwaitTime;
+    @FXML
+    private TableColumn<ProcessTable, Integer> cWTA;
+    
+     private ObservableList<ProcessTable> List;
+     
+   
     @FXML
     private void readFileAction(ActionEvent event) {
         String FileName = fileNameTxt.getText() ;
        if(readFile(FileName))
-           System.out.println("Done!");
-       System.out.println(processes.get(0).pid);
+           System.out.println("Done!");       
     }
     
      public boolean readFile(String fileName){      // function to read processes data from the given input file, and save it in the arrayList processes
@@ -70,7 +94,21 @@ public class FXMLDocumentController implements Initializable {
                 
                 /* create a new process from the read data and add it immediately to the processes arrayList */
                 processes.add(new Process(pid, arrivalTime, burstTime, deadline));
+                ProcessTable p = new ProcessTable(pid , arrivalTime ,burstTime , 0,0,0,0);
+                List.add(p);
               }
+            
+        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
+        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
+        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
+         cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
+        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+
+
+        Table.setItems(null);
+        Table.setItems(List);
             //, repeat, interval
         }
         catch(Exception ex){                // if any problem occured while oppening or reading the file
@@ -162,4 +200,3 @@ public class FXMLDocumentController implements Initializable {
     }    
     
 }
-///////////dsaaaaaaaaaaaaaaaaaaaaaaaaaaa
