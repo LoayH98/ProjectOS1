@@ -10,17 +10,16 @@ public class Process {
     int finishTime;
     int turnaround;
     int waitingTime;
-    double weightTime ;
+    double weightTime;
    // int repeat;
     //int interval;
     int deadline;
     int remainingTime;
  //   int remainingPeriods;
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 // , int repeat , int interval
-    public Process(int pid, int arrivalTime, int burstTime, int deadline) {
-        this.pid = pid;
+    public Process( int arrivalTime, int burstTime, int deadline) {
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.startTime = -1;            // -1 indicating that the process hasn't started yet

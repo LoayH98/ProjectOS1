@@ -7,11 +7,14 @@ package projectoss1;
 
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,10 +36,11 @@ import javax.swing.JOptionPane;
  *
  * @author user
  */
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class FXMLDocumentController implements Initializable {
     
+    public  DecimalFormat numberFormat = new DecimalFormat("#.00"); 
       ArrayList<Process> processes;
     static ArrayList<Process> readyQueue;
     @FXML
@@ -114,6 +118,7 @@ public class FXMLDocumentController implements Initializable {
      public boolean readFile(String fileName){      // function to read processes data from the given input file, and save it in the arrayList processes
          // returns true if data has read successfully, otherwise it returns false
          
+         if(processes == null)
         processes = new ArrayList<Process>();   
         try{
           
@@ -128,20 +133,26 @@ public class FXMLDocumentController implements Initializable {
                 String tokens[] = line.split("[,]");    // split it using the de-limitor "|"
                 
                 /* convert data from String to int and save it */
-                int pid = Integer.parseInt(tokens[0]);          
-                int arrivalTime = Integer.parseInt(tokens[1]);  
-                int burstTime = Integer.parseInt(tokens[2]);
+               /// int pid = Integer.parseInt(tokens[0]);          
+                int arrivalTime = Integer.parseInt(tokens[0]);  
+                int burstTime = Integer.parseInt(tokens[1]);
                // int repeat = Integer.parseInt(tokens[3]);
              //   int interval = Integer.parseInt(tokens[4]);
-                int deadline = Integer.parseInt(tokens[3]);
+                int deadline = Integer.parseInt(tokens[2]);
                 
                 System.out.print("aaaa");
                 /* create a new process from the read data and add it immediately to the processes arrayList */
-              processes.add(new Process(pid, arrivalTime, burstTime, deadline));
+                Process p1 = new Process(arrivalTime, burstTime, deadline);
+                p1.pid = processes.size();
+                processes.add(p1);
               
-             ProcessTable p;
-                p = new ProcessTable(String.valueOf(pid) , String.valueOf(arrivalTime) ,String.valueOf(burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
-              List.add(p);
+        
+              }
+             
+        
+         for(int i =0 ; i<processes.size(); i++){
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+              List.add(t);
               }
             
         cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
@@ -376,7 +387,9 @@ public class FXMLDocumentController implements Initializable {
        ArrayList<Process> copy = new ArrayList<>();
       
       for (Process p : processes){
-          copy.add(new Process(p.pid, p.arrivalTime, p.burstTime, p.deadline));
+          Process p1 = new Process(p.arrivalTime,p.burstTime, p.deadline);
+          p1.pid = p.pid ;
+          copy.add(p1);
       }
 
            
@@ -405,6 +418,7 @@ public class FXMLDocumentController implements Initializable {
           for( i=0 ; i<processes.size() ; i++ )
           {
               processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
               TAavg+=processes.get(i).turnaround;
               WTavg+=processes.get(i).waitingTime;
               WTAavg+=processes.get(i).weightTime;
@@ -415,6 +429,14 @@ public class FXMLDocumentController implements Initializable {
           TAavg/=(i);
           WTavg/=(i);
           WTAavg/=(i);
+          
+          
+         
+          
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+          
           TAtextArea.setText(String.valueOf(TAavg));
           WTtextArea.setText(String.valueOf(WTavg));
           WTAtextArea.setText(String.valueOf(WTAavg));
@@ -442,6 +464,7 @@ public class FXMLDocumentController implements Initializable {
              for(i =0 ;i<processes.size() ; i++){
           ProcessTable p;
            processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+           processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
           p = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(processes.get(i).finishTime),String.valueOf(processes.get(i).turnaround),String.valueOf(processes.get(i).waitingTime),String.valueOf(processes.get(i).weightTime));
               List.add(p);
               TAavg+=processes.get(i).turnaround;
@@ -461,7 +484,13 @@ public class FXMLDocumentController implements Initializable {
           TAavg/=(i);
           WTavg/=(i);
           WTAavg/=(i);
-            System.out.println(TAavg);
+           
+          
+      
+          
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
           TAtextArea.setText(String.valueOf(TAavg));
           WTtextArea.setText(String.valueOf(WTavg));
           WTAtextArea.setText(String.valueOf(WTAavg));
@@ -472,9 +501,60 @@ public class FXMLDocumentController implements Initializable {
         
         processes.clear();
          for (Process p : copy){
-          processes.add(new Process(p.pid, p.arrivalTime, p.burstTime, p.deadline));
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
       }
       
     }
+    
+    
+    @FXML
+    Button generate ;
+    
+    @FXML
+    private void GenerateAction(ActionEvent event){
+        if(processes == null)
+               processes = new ArrayList<Process>();   
+
+       Random rand = new Random(); 
+
+      System.out.println(processes.size());
+        Process p1 = new Process(rand.nextInt(20) , rand.nextInt(20)+1 , rand.nextInt(50));
+        p1.pid = processes.size();
+        
+        processes.add(p1);
+        
+         List = FXCollections.observableArrayList();  
+        
+         for(int i =0 ; i<processes.size(); i++){
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+              List.add(t);
+              }
+            
+        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
+        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
+        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
+       cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
+        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+       //Table.setItems(null);
+       Table.setItems(List);
+            //, repeat, interval
+     
+    }
+    
+    
+    @FXML
+    Button exit ; 
+    
+    @FXML
+    public void exitAction(ActionEvent event){
+        Platform.exit();
+    }
+    
+    
+  
 }
 /// ready

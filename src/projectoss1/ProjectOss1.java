@@ -26,8 +26,8 @@ public class ProjectOss1 extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        System.out.println("Start");
-
+     
+        
 
         Parent root = FXMLLoader.load(getClass().getResource("FXMLFace.fxml"));
      //   System.out.println("Start");

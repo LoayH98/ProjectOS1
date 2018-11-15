@@ -14,7 +14,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="482.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectoss1.FXMLDocumentController">
    <children>
-      <TableView fx:id="Table" layoutX="26.0" layoutY="92.0" prefHeight="216.0" prefWidth="553.0">
+      <TableView fx:id="Table" layoutX="26.0" layoutY="92.0" prefHeight="216.0" prefWidth="537.0">
          <columns>
             <TableColumn fx:id="cpid" prefWidth="75.0" text="Pid" />
             <TableColumn fx:id="carrivalTime" text="arrivalTime" />
@@ -22,13 +22,13 @@
             <TableColumn fx:id="cfinishTime" prefWidth="80.66661071777344" text="finishTime" />
             <TableColumn fx:id="cTA" prefWidth="66.666748046875" text="TA" />
             <TableColumn fx:id="cwaitTime" prefWidth="89.99993896484375" text="waitTime" />
-            <TableColumn fx:id="cWTA" prefWidth="85.999989827474" text="WTA" />
+            <TableColumn fx:id="cWTA" prefWidth="70.66671752929688" text="WTA" />
          </columns>
       </TableView>
       <Button fx:id="readFileBtn" layoutX="594.0" layoutY="34.0" mnemonicParsing="false" onAction="#readFileAction" prefHeight="35.0" prefWidth="74.0" text="Browse" />
-      <Button layoutX="470.0" layoutY="34.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="74.0" text="Generate" />
+      <Button fx:id="generate" layoutX="470.0" layoutY="34.0" mnemonicParsing="false" onAction="#GenerateAction" prefHeight="35.0" prefWidth="74.0" text="Generate" />
       <Button fx:id="runBtn" layoutX="563.0" layoutY="352.0" mnemonicParsing="false" onAction="#runAlgoAction" prefHeight="38.0" prefWidth="107.0" text="Run" />
-      <Button layoutX="563.0" layoutY="434.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="107.0" text="Exit" />
+      <Button fx:id="exit" layoutX="563.0" layoutY="434.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="38.0" prefWidth="107.0" text="Exit" />
       <Label layoutX="26.0" layoutY="23.0" prefHeight="47.0" prefWidth="299.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
          <font>
             <Font name="Comic Sans MS Bold" size="18.0" />
