@@ -30,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 
 /**
@@ -41,7 +42,7 @@ import javax.swing.JOptionPane;
 public class FXMLDocumentController implements Initializable {
     
     public  DecimalFormat numberFormat = new DecimalFormat("#.00"); 
-      ArrayList<Process> processes;
+     static ArrayList<Process> processes;
     static ArrayList<Process> readyQueue;
     @FXML
     private Label label;
@@ -382,8 +383,13 @@ public class FXMLDocumentController implements Initializable {
    
     @FXML
     private void runAlgoAction (ActionEvent event){
-        
-        
+        if(processes == null)
+            JOptionPane.showMessageDialog(null, "Error!! There No Processes"); // show an error message
+        ArrayList <Integer> pp = SJF();
+          
+          for(int i =0 ;i <pp.size(); i++)
+                System.out.println(pp.get(i));
+
        ArrayList<Process> copy = new ArrayList<>();
       
       for (Process p : processes){
@@ -397,6 +403,11 @@ public class FXMLDocumentController implements Initializable {
         {
             ArrayList<Integer> chart = null ;
             chart = SJF();
+            
+          for(int i =0 ; i<chart.size() ; i++){
+             
+              
+          }
           List = FXCollections.observableArrayList();
           /*  for(int i =0 ; i<chart.size() ; i++ )
             {
@@ -456,7 +467,11 @@ public class FXMLDocumentController implements Initializable {
         
         
         if(RRradioBtn.isSelected()){
-          RR();
+          ArrayList <Integer> pp1 = RR();
+          
+          for(int i =0 ;i <pp.size(); i++)
+                System.out.println(pp1.get(i));
+
           
              List = FXCollections.observableArrayList();         
              double TAavg=0.0 ,WTavg=0.0 ,WTAavg=0.0;int i = 0 ;
@@ -584,6 +599,19 @@ public class FXMLDocumentController implements Initializable {
             
          }
     }
-  
+
+    public static ArrayList<Process> getProcesses() {
+        return processes;
+    }
+     
+    @FXML
+    Button ganttChart ; 
+    
+     @FXML
+     public void ganttChartAction(ActionEvent event){
+         GanttChartSample gantt = new GanttChartSample();
+         gantt.start(new Stage());
+     }
+       
 }
 /// ready

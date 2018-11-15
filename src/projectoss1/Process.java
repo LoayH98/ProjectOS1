@@ -1,6 +1,8 @@
 
 package projectoss1;
 
+import java.util.ArrayList;
+
 public class Process {
 
     int pid;
@@ -15,6 +17,9 @@ public class Process {
     //int interval;
     int deadline;
     int remainingTime;
+    ArrayList <WaitingTime> WL ;
+    ArrayList <RuninngTime> RL ;
+
  //   int remainingPeriods;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
