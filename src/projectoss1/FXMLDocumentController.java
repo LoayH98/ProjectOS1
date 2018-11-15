@@ -554,7 +554,36 @@ public class FXMLDocumentController implements Initializable {
         Platform.exit();
     }
     
+    @FXML
+    Button refresh ; 
     
+    @FXML
+     public void RefreshAction(ActionEvent event){
+         if(processes != null){
+        List = FXCollections.observableArrayList();  
+        
+         for(int i =0 ; i<processes.size(); i++){
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+              List.add(t);
+              }
+            
+        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
+        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
+        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
+       cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
+        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+       //Table.setItems(null);
+       Table.setItems(List);
+            //, repeat, interval
+            
+             TAtextArea.setText("");
+          WTtextArea.setText("");
+          WTAtextArea.setText("");
+            
+         }
+    }
   
 }
 /// ready
