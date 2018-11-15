@@ -380,34 +380,94 @@ public class FXMLDocumentController implements Initializable {
           TQlabel.setVisible(false);
           TQtextArea.setVisible(false);
     }
-   
+   /////////////////////////////////////////////////////////////////////////////////////Run 
+
+    public FXMLDocumentController() {
+    }
     @FXML
     private void runAlgoAction (ActionEvent event){
         if(processes == null)
             JOptionPane.showMessageDialog(null, "Error!! There No Processes"); // show an error message
-        ArrayList <Integer> pp = SJF();
-          
-          for(int i =0 ;i <pp.size(); i++)
-                System.out.println(pp.get(i));
+    
 
        ArrayList<Process> copy = new ArrayList<>();
       
       for (Process p : processes){
-          Process p1 = new Process(p.arrivalTime,p.burstTime, p.deadline);
+          Process p1 = new Process(p.arrivalTime,p.burstTime, p.deadline); ////////// COPY ORGIN PROCESSES
           p1.pid = p.pid ;
           copy.add(p1);
       }
 
-           
+         ////////////////////////////////////////////////////////////////////////SJF  
         if(SJFradioButton.isSelected())
         {
-            ArrayList<Integer> chart = null ;
-            chart = SJF();
+                ArrayList <Integer> chart = SJF();
+ 
+  
+            for(int i =0 ; i<processes.size() ;i++){
+                processes.get(i).RL = null ;
+                processes.get(i).WL = null ;
+            }
             
-          for(int i =0 ; i<chart.size() ; i++){
+                
+            
+       ///////////// CALCULATE WAITING , RUNING TIME
+        int  FirstArrive  =processes.get(0).arrivalTime ;
+         int index = 0 ;
+          for(int j=1;j<processes.size();j++){
+              if(processes.get(j).arrivalTime < FirstArrive ){
+                  FirstArrive = processes.get(j).arrivalTime ;
+                  index = j ; 
+              }
+          }
+           processes.get(index).WL = new ArrayList<> ();
+           processes.get(index).WL.add(new WaitingTime(0,0)); 
+            //System.out.println("w" + processes.get(index));
+           
+        
+          for(int i =0 ; i < chart.size()-1 ;i++){
+            if(chart.get(i)!= -1){
+                    if(processes.get(chart.get(i)).RL == null)
+                    {                    
+                       processes.get(chart.get(i)).RL =new ArrayList<>();
+                       processes.get(chart.get(i)).RL.add(new RuninngTime(i,i+processes.get(chart.get(i)).burstTime));
+                       
+                    }
+                   
+                    
+                    for(int j =0 ; j<processes.size() ; j++){
+                        if(j != chart.get(i)){
+                            
+                            if(processes.get(j).arrivalTime == i ){
+                                processes.get(j).WL = new ArrayList<> ();
+                                processes.get(j).WL.add(new WaitingTime(i,i+ processes.get(j).waitingTime));
+                                System.out.println("w" + processes.get(j));
+                            }
+                        }
+            }
+                    
+                   
+                    for(int j =0 ; j<processes.size() ; j++ ){
+                        if(processes.get(j).WL == null )
+                             processes.get(j).WL = new ArrayList<> ();
+                             processes.get(j).WL.add(new WaitingTime(0,0));
+                    }
              
               
           }
+          }
+         
+          /*  System.out.println("-----------------------------");
+          for(int i=0;i<processes.size();i++){
+              if(processes.get(i).WL != null && processes.get(i).RL != null ){
+               System.out.println("Run procces #" + i + "-->" + processes.get(i).RL.get(0).startR + ",,"  +processes.get(i).RL.get(0).endR );
+               System.out.println("Wait procces #" + i + "-->" + processes.get(i).WL.get(0).startW + ",,"  +processes.get(i).WL.get(0).endW );
+               
+              }
+              
+               System.out.println("-----------------------------");
+          }
+          */
           List = FXCollections.observableArrayList();
           /*  for(int i =0 ; i<chart.size() ; i++ )
             {
@@ -424,6 +484,8 @@ public class FXMLDocumentController implements Initializable {
                         pp=processes.get(0);
 
                 }*/
+          
+          ///CALCULATE AVERAGES 
           int i=0;
           double TAavg=0.0 ,WTavg=0.0 ,WTAavg=0.0;
           for( i=0 ; i<processes.size() ; i++ )
@@ -454,7 +516,7 @@ public class FXMLDocumentController implements Initializable {
           
           
         
-                    cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
         carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
         cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
         cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
@@ -463,14 +525,64 @@ public class FXMLDocumentController implements Initializable {
         cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
        //Table.setItems(null);
        Table.setItems(List);
+       
+       
+       GanttChartSample gantt = new GanttChartSample();
+         gantt.start(new Stage());
          }
         
-        
+        ////////////////////////////////////////////////////////////////ROUND ROBEN
         if(RRradioBtn.isSelected()){
-          ArrayList <Integer> pp1 = RR();
+            
+            
+            
+            
+            
+            ////////////////////////GANTT CHART
+          ArrayList <Integer> chart = RR();
+       
+           for(int i =0 ; i<processes.size() ;i++){
+                processes.get(i).RL = new ArrayList<>() ;
+                processes.get(i).WL =  new ArrayList<>() ;
+            }
           
-          for(int i =0 ;i <pp.size(); i++)
-                System.out.println(pp1.get(i));
+           for(int i = 0 ; i<chart.size()-1 ; i++){
+               if(chart.get(i)!= -1 ){
+                   for(int j = 0 ; j<processes.size() ; j++){
+                      
+                       if(chart.get(i) == j){
+                           processes.get(j).RL.add(new RuninngTime(i, i+1));
+                       }
+                       else if(processes.get(j).arrivalTime < i && processes.get(j).finishTime > i ) {
+                           processes.get(j).WL.add(new WaitingTime(i, i+1));
+                       }
+                   }
+               }
+           }
+           
+           
+           int j = 0 ; 
+              System.out.println("-----------------------------");
+          for(int i=0;i<processes.size();i++){
+              //if(processes.get(i).WL != null && processes.get(i).RL != null )
+                  j =0 ; 
+                 while( j  < processes.get(i).RL.size()  ){
+                        System.out.println("Run procces #" + i + "-->" + processes.get(i).RL.get(j).startR + ",,"  +processes.get(i).RL.get(j).endR );
+                         j++ ; 
+                 }
+                 j=0 ; 
+                   while( j  < processes.get(i).WL.size()  ){
+                       System.out.println("Wait procces #" + i + "-->" + processes.get(i).WL.get(j).startW + ",,"  +processes.get(i).WL.get(j).endW );
+                        j++ ; 
+                   }
+              
+          }
+         
+              for(int i =0 ;i <chart.size(); i++)
+                System.out.println(chart.get(i));
+          
+          
+          
 
           
              List = FXCollections.observableArrayList();         
@@ -510,9 +622,13 @@ public class FXMLDocumentController implements Initializable {
           WTtextArea.setText(String.valueOf(WTavg));
           WTAtextArea.setText(String.valueOf(WTAavg));
        
-       
-     
+       GanttChartSample gantt = new GanttChartSample();
+         gantt.start(new Stage());
+         
+            
         }
+        
+         
         
         processes.clear();
          for (Process p : copy){
@@ -534,7 +650,7 @@ public class FXMLDocumentController implements Initializable {
 
        Random rand = new Random(); 
 
-      System.out.println(processes.size());
+      
         Process p1 = new Process(rand.nextInt(20) , rand.nextInt(20)+1 , rand.nextInt(50));
         p1.pid = processes.size();
         
@@ -604,14 +720,41 @@ public class FXMLDocumentController implements Initializable {
         return processes;
     }
      
+ 
+     
     @FXML
-    Button ganttChart ; 
+    Button delete ; 
     
      @FXML
-     public void ganttChartAction(ActionEvent event){
-         GanttChartSample gantt = new GanttChartSample();
-         gantt.start(new Stage());
+     public void deleteAction(ActionEvent event){
+         if(processes != null){
+             processes.clear();
+        List = FXCollections.observableArrayList();  
+        
+         for(int i =0 ; i<processes.size(); i++){
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+              List.add(t);
+              }
+            
+        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
+        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
+        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
+       cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
+        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+       //Table.setItems(null);
+       Table.setItems(List);
+            //, repeat, interval
+            
+             TAtextArea.setText("");
+          WTtextArea.setText("");
+          WTAtextArea.setText("");
+            
+             processes = null ;
+         }
      }
+     
        
 }
 /// ready

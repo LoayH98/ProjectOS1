@@ -12,6 +12,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import static projectoss1.FXMLDocumentController.processes;
 import projectoss1.GanttChart.ExtraData;
 
 // TODO: use date for x-axis
@@ -22,13 +23,11 @@ public class GanttChartSample extends Application {
         stage.setTitle("Gantt Chart Sample");
       
 
-       /* ArrayList <Process> processes = FXMLDocumentController.getProcesses() ;
+        ArrayList <Process> processes = FXMLDocumentController.getProcesses() ;
          String[] process = new String[processes.size()];
         for(int i =0 ; i<processes.size() ;i++){
            process[i] = "Process #"+ i;
         }
-        
-        */
         
         final NumberAxis xAxis = new NumberAxis();
         final CategoryAxis yAxis = new CategoryAxis();
@@ -47,31 +46,31 @@ public class GanttChartSample extends Application {
         chart.setTitle("Process Montoring");
         chart.setLegendVisible(false);
         chart.setBlockHeight( 50);
-        String machine;
-/*
-        machine = machines[0];
-        XYChart.Series series1 = new XYChart.Series();
-        series1.getData().add(new XYChart.Data(0, machine, new ExtraData( 1, "status-red")));
-        series1.getData().add(new XYChart.Data(1, machine, new ExtraData( 1, "status-green")));
-        series1.getData().add(new XYChart.Data(2, machine, new ExtraData( 1, "status-red")));
-        series1.getData().add(new XYChart.Data(3, machine, new ExtraData( 1, "status-green")));
-
-        machine = machines[1];
-        XYChart.Series series2 = new XYChart.Series();
-        series2.getData().add(new XYChart.Data(0, machine, new ExtraData( 1, "status-green")));
-        series2.getData().add(new XYChart.Data(1, machine, new ExtraData( 1, "status-green")));
-        series2.getData().add(new XYChart.Data(2, machine, new ExtraData( 2, "status-red")));
-
-        machine = machines[2];
-        XYChart.Series series3 = new XYChart.Series();
-        series3.getData().add(new XYChart.Data(0, machine, new ExtraData( 1, "status-blue")));
-        series3.getData().add(new XYChart.Data(1, machine, new ExtraData( 2, "status-red")));
-        series3.getData().add(new XYChart.Data(3, machine, new ExtraData( 1, "status-green")));
-
-        chart.getData().addAll(series1, series2, series3);           
-
+        String p;
+        
+       /* for(int i=0;i<processes.size();i++){
+              if(processes.get(i).WL != null && processes.get(i).RL != null ){
+               System.out.println("Run procces #" + i + "-->" + processes.get(i).RL.get(0).startR + ",,"  +processes.get(i).RL.get(0).endR );
+               System.out.println("Wait procces #" + i + "-->" + processes.get(i).WL.get(0).startW + ",,"  +processes.get(i).WL.get(0).endW );
+              }
+          }*/
+        
+        for(int i =0 ; i< processes.size() ; i++){
+            p = process[i]; 
+                   
+        XYChart.Series series = new XYChart.Series();
+        for(int j = 0 ; j < processes.get(i).WL.size() ; j++)
+            series.getData().add(new XYChart.Data(processes.get(i).WL.get(j).startW, p, new ExtraData( processes.get(i).WL.get(j).endW - processes.get(i).WL.get(j).startW, "status-red")));
+        
+         for(int j = 0 ; j < processes.get(i).RL.size() ; j++)
+             series.getData().add(new XYChart.Data(processes.get(i).RL.get(j).startR, p, new ExtraData(processes.get(i).RL.get(j).endR- processes.get(i).RL.get(j).startR, "status-green")));   
+        chart.getData().add(series);
+        }
+        
+        //series.getData().add(new XYChart.Data(processes.get(i).WL.get(0).startW, p, new ExtraData( processes.get(i).WL.get(0).endW - processes.get(i).WL.get(0).startW, "status-red")));
+        //series.getData().add(new XYChart.Data(processes.get(i).RL.get(0).startR, p, new ExtraData(processes.get(i).RL.get(0).endR- processes.get(i).RL.get(0).startR, "status-green")));   
         chart.getStylesheets().add(getClass().getResource("ganttchart.css").toExternalForm());
-*/
+
         Scene scene  = new Scene(chart,620,350);
         stage.setScene(scene);
         stage.show();
