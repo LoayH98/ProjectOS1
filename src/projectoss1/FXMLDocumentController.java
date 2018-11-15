@@ -8,6 +8,8 @@ package projectoss1;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import javafx.collections.FXCollections;
@@ -17,9 +19,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javax.swing.JOptionPane;
@@ -42,7 +47,37 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private TextField fileNameTxt;
-        
+    
+    @FXML
+    private Button runBtn;
+
+    @FXML
+    private RadioButton PradioButton;
+
+    @FXML
+    private ToggleGroup Algo;
+
+    @FXML
+    private RadioButton SJFradioButton;
+
+    @FXML
+    private RadioButton RRradioBtn;
+
+    @FXML
+    private TextField WTtextArea;
+
+    @FXML
+    private TextField TAtextArea;
+
+    @FXML
+    private TextField WTAtextArea;
+    @FXML 
+    private TextField TQtextArea ;
+    @FXML
+    private Label TQlabel ;
+ 
+ 
+    
     
     @FXML
     private TableView<ProcessTable> Table;
@@ -173,7 +208,7 @@ public class FXMLDocumentController implements Initializable {
     }
       
       
-      public ArrayList<Integer> PrirorityWithP_and_Aging(){ 
+       public ArrayList<Integer> PrirorityWithP_and_Aging(){ 
        int time = 0;                               // current time
        Process currentlyRunning = null;            // the process that is running currently, initially null
        readyQueue = new ArrayList<Process>();      // ready queue to add arrived processes that are ready to run
@@ -198,20 +233,13 @@ public class FXMLDocumentController implements Initializable {
         readyQueue = new ArrayList<Process>();                      // ready queue to add arrived processes that are ready to run
         ArrayList<Integer> ganttChart = new ArrayList<Integer>();   // Gantt Chart to show processes run-time
 
-        timeQuantum = readTimeQuantum();            // read timeQuantum from user
+        timeQuantum = Integer.valueOf(TQtextArea.getText()) ; // read timeQuantum from user
         
-        if (timeQuantum == -3){                          // if invalid input was entered
-            JOptionPane.showMessageDialog(null, "Invalid Input!");
+        if (timeQuantum < 1){                          // if invalid input was entered
+           JOptionPane.showMessageDialog(null, "Time Quantum Cannot be less than 1!");
             return null;
         }
-        else if (timeQuantum == -2){                     // if value less than 1 was entered that means nonpositive number
-            JOptionPane.showMessageDialog(null, "Time Quantum Cannot be less than 1!");
-            return null;
-        }        
-        else if (timeQuantum == -1){                     // if user pressed cancel button
-            return null;
-        }
-        else
+        else{
             remainingTimeQuantum = timeQuantum;     // initialize remainingTimeQuantum
      
         while(!allProcessesFinished()){     // while there are still unfinished processes
@@ -262,8 +290,9 @@ public class FXMLDocumentController implements Initializable {
         }
         
         return ganttChart;
+        }
     }
-     public int readTimeQuantum(){               // function to read timeQuantum from user and return it
+    /* public int readTimeQuantum(){               // function to read timeQuantum from user and return it
         String timeQuantumString = JOptionPane.showInputDialog(null,"Enter Time Quantum:");
         int timeQuantum;
         
@@ -282,6 +311,7 @@ public class FXMLDocumentController implements Initializable {
         
         return timeQuantum;
     }
+*/
          
     public void addToGanttChart(ArrayList<Integer> ganttChart, Process currentlyRunning){   // function to add a process's pid to Gantt Chart
         if (currentlyRunning != null)               // if there is a process running at the time the function has called
@@ -319,5 +349,132 @@ public class FXMLDocumentController implements Initializable {
         // TODO
     }    
     
+    @FXML
+    private void RRButton (ActionEvent event ){
+          TQlabel.setVisible(true);
+          TQtextArea.setVisible(true);
+          TQtextArea.setText("1");
+    }
+    
+     @FXML
+    private void SJRButton (ActionEvent event ){
+          TQlabel.setVisible(false);
+          TQtextArea.setVisible(false);
+    }
+    
+    
+     @FXML
+    private void PButton (ActionEvent event ){
+          TQlabel.setVisible(false);
+          TQtextArea.setVisible(false);
+    }
+   
+    @FXML
+    private void runAlgoAction (ActionEvent event){
+        
+        
+       ArrayList<Process> copy = new ArrayList<>();
+      
+      for (Process p : processes){
+          copy.add(new Process(p.pid, p.arrivalTime, p.burstTime, p.deadline));
+      }
+
+           
+        if(SJFradioButton.isSelected())
+        {
+            ArrayList<Integer> chart = null ;
+            chart = SJF();
+          List = FXCollections.observableArrayList();
+          /*  for(int i =0 ; i<chart.size() ; i++ )
+            {
+                Process pp = null;
+                 
+                for(int j =0 ; j <processes.size() ; j++)
+                {
+                    if(processes.get(j).pid==chart.get(i))
+                    {
+                        pp = processes.get(j);
+                        break;
+                    }
+                    else 
+                        pp=processes.get(0);
+
+                }*/
+          int i=0;
+          double TAavg=0.0 ,WTavg=0.0 ,WTAavg=0.0;
+          for( i=0 ; i<processes.size() ; i++ )
+          {
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+               ProcessTable p;
+                p = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(processes.get(i).finishTime),String.valueOf(processes.get(i).turnaround),String.valueOf(processes.get(i).waitingTime),String.valueOf(processes.get(i).weightTime));
+               List.add(p);
+            }
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+          TAtextArea.setText(String.valueOf(TAavg));
+          WTtextArea.setText(String.valueOf(WTavg));
+          WTAtextArea.setText(String.valueOf(WTAavg));
+          
+          
+        
+                    cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
+        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
+        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
+       cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
+        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+       //Table.setItems(null);
+       Table.setItems(List);
+         }
+        
+        
+        if(RRradioBtn.isSelected()){
+          RR();
+          
+             List = FXCollections.observableArrayList();         
+             double TAavg=0.0 ,WTavg=0.0 ,WTAavg=0.0;int i = 0 ;
+          
+             for(i =0 ;i<processes.size() ; i++){
+          ProcessTable p;
+           processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+          p = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(processes.get(i).finishTime),String.valueOf(processes.get(i).turnaround),String.valueOf(processes.get(i).waitingTime),String.valueOf(processes.get(i).weightTime));
+              List.add(p);
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
+        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
+        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
+       cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
+        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+       //Table.setItems(null);
+       Table.setItems(List);
+       
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+            System.out.println(TAavg);
+          TAtextArea.setText(String.valueOf(TAavg));
+          WTtextArea.setText(String.valueOf(WTavg));
+          WTAtextArea.setText(String.valueOf(WTAavg));
+       
+       
+     
+        }
+        
+        processes.clear();
+         for (Process p : copy){
+          processes.add(new Process(p.pid, p.arrivalTime, p.burstTime, p.deadline));
+      }
+      
+    }
 }
 /// ready

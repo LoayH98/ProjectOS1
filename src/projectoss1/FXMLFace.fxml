@@ -5,7 +5,8 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
@@ -13,7 +14,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="482.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectoss1.FXMLDocumentController">
    <children>
-      <TableView fx:id="Table" layoutX="26.0" layoutY="93.0" prefHeight="216.0" prefWidth="537.0">
+      <TableView fx:id="Table" layoutX="26.0" layoutY="92.0" prefHeight="216.0" prefWidth="553.0">
          <columns>
             <TableColumn fx:id="cpid" prefWidth="75.0" text="Pid" />
             <TableColumn fx:id="carrivalTime" text="arrivalTime" />
@@ -21,12 +22,12 @@
             <TableColumn fx:id="cfinishTime" prefWidth="80.66661071777344" text="finishTime" />
             <TableColumn fx:id="cTA" prefWidth="66.666748046875" text="TA" />
             <TableColumn fx:id="cwaitTime" prefWidth="89.99993896484375" text="waitTime" />
-            <TableColumn fx:id="cWTA" prefWidth="75.0" text="WTA" />
+            <TableColumn fx:id="cWTA" prefWidth="85.999989827474" text="WTA" />
          </columns>
       </TableView>
       <Button fx:id="readFileBtn" layoutX="594.0" layoutY="34.0" mnemonicParsing="false" onAction="#readFileAction" prefHeight="35.0" prefWidth="74.0" text="Browse" />
       <Button layoutX="470.0" layoutY="34.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="74.0" text="Generate" />
-      <Button layoutX="563.0" layoutY="352.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="107.0" text="Run" />
+      <Button fx:id="runBtn" layoutX="563.0" layoutY="352.0" mnemonicParsing="false" onAction="#runAlgoAction" prefHeight="38.0" prefWidth="107.0" text="Run" />
       <Button layoutX="563.0" layoutY="434.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="107.0" text="Exit" />
       <Label layoutX="26.0" layoutY="23.0" prefHeight="47.0" prefWidth="299.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
          <font>
@@ -41,17 +42,18 @@
             </RadialGradient>
          </textFill>
       </Label>
-      <Label layoutX="26.0" layoutY="373.0" prefHeight="25.0" prefWidth="142.0" text="Chose Algorithm :">
+      <Label layoutX="26.0" layoutY="373.0" prefHeight="25.0" prefWidth="149.0" text="Choose Algorithm :">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <RadioButton layoutX="416.0" layoutY="377.0" mnemonicParsing="false" text="priority / p" />
-      <RadioButton layoutX="295.0" layoutY="377.0" mnemonicParsing="false" text="SJF" />
-      <RadioButton layoutX="186.0" layoutY="377.0" mnemonicParsing="false" text="RR" />
-      <Button layoutX="91.0" layoutY="435.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="261.0" text="Gant Chart" />
-      <TextArea editable="false" layoutX="263.0" layoutY="319.0" prefHeight="38.0" prefWidth="52.0" />
-      <TextArea editable="false" layoutX="99.0" layoutY="319.0" prefHeight="17.0" prefWidth="52.0" />
+      <RadioButton fx:id="PradioButton" layoutX="416.0" layoutY="377.0" mnemonicParsing="false" onAction="#PButton" text="priority / p">
+         <toggleGroup>
+            <ToggleGroup fx:id="Algo" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="SJFradioButton" layoutX="295.0" layoutY="377.0" mnemonicParsing="false" onAction="#SJRButton" selected="true" text="SJF" toggleGroup="$Algo" />
+      <RadioButton fx:id="RRradioBtn" layoutX="186.0" layoutY="377.0" mnemonicParsing="false" onAction="#RRButton" text="RR" toggleGroup="$Algo" />
+      <Button layoutX="285.0" layoutY="435.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="261.0" text="Gant Chart" />
       <Label layoutX="26.0" layoutY="325.0" prefHeight="25.0" prefWidth="64.0" text="average TA">
          <font>
             <Font name="System Bold" size="12.0" />
@@ -62,11 +64,19 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="333.0" layoutY="325.0" prefHeight="25.0" prefWidth="93.0" text="average WTA">
+      <Label layoutX="352.0" layoutY="325.0" prefHeight="25.0" prefWidth="93.0" text="average WTA">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TextArea editable="false" layoutX="429.0" layoutY="319.0" prefHeight="38.0" prefWidth="52.0" />
+      <Label fx:id="TQlabel" layoutX="26.0" layoutY="419.0" prefHeight="17.0" prefWidth="93.0" text="Time Quatum :" visible="false">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TAtextArea" editable="false" layoutX="96.0" layoutY="325.0" prefHeight="25.0" prefWidth="64.0" />
+      <TextField fx:id="WTtextArea" editable="false" layoutX="262.0" layoutY="325.0" prefHeight="25.0" prefWidth="57.0" />
+      <TextField fx:id="WTAtextArea" editable="false" layoutX="438.0" layoutY="325.0" prefHeight="25.0" prefWidth="64.0" />
+      <TextField fx:id="TQtextArea" layoutX="129.0" layoutY="416.0" prefHeight="25.0" prefWidth="45.0" text="1" visible="false" />
    </children>
 </AnchorPane>
