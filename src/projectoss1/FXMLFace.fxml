@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,32 +18,54 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="482.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectoss1.FXMLDocumentController">
+<AnchorPane id="AnchorPane" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="521.0" prefWidth="763.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectoss1.FXMLDocumentController">
    <children>
-      <ImageView fitHeight="482.0" fitWidth="732.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="583.0" fitWidth="802.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../3.jpeg" />
          </image>
+         <effect>
+            <DropShadow>
+               <input>
+                  <GaussianBlur />
+               </input>
+            </DropShadow>
+         </effect>
       </ImageView>
-      <AnchorPane layoutX="6.0" prefHeight="482.0" prefWidth="378.0">
+      <AnchorPane blendMode="HARD_LIGHT" layoutX="7.0" prefHeight="521.0" prefWidth="751.0">
          <children>
-            <TableView fx:id="Table" layoutX="15.0" layoutY="92.0" prefHeight="216.0" prefWidth="537.0">
+            <TableView fx:id="Table" layoutX="33.0" layoutY="93.0" prefHeight="216.0" prefWidth="574.0">
                <columns>
-                  <TableColumn fx:id="cpid" prefWidth="53.33334159851074" text="Pid" />
-                  <TableColumn fx:id="carrivalTime" prefWidth="75.33332061767578" text="arrivalTime" />
-                  <TableColumn fx:id="cburstTime" prefWidth="70.0" text="burstTime" />
-                  <TableColumn fx:id="cpriority" prefWidth="69.99998474121094" text="priority" visible="false" />
-                  <TableColumn fx:id="cfinishTime" prefWidth="76.66668701171875" text="finishTime" />
-                  <TableColumn fx:id="cwaitTime" prefWidth="74.0" text="waitTime" />
-                  <TableColumn fx:id="cWTA" prefWidth="54.66668701171875" text="WTA" />
-                  <TableColumn fx:id="cTA" prefWidth="59.333343505859375" text="TA" />
+                  <TableColumn fx:id="cpid" prefWidth="41.99999809265137" text="Pid" />
+                  <TableColumn fx:id="carrivalTime" prefWidth="78.00003814697266" text="arrivalTime" />
+                  <TableColumn fx:id="cburstTime" prefWidth="72.66665649414062" text="burstTime" />
+                  <TableColumn fx:id="cpriority" prefWidth="74.66667175292969" text="priority" visible="false" />
+                  <TableColumn fx:id="cfinishTime" prefWidth="81.333251953125" text="finishTime" />
+                  <TableColumn fx:id="cwaitTime" prefWidth="94.6666259765625" text="waitTime" />
+                  <TableColumn fx:id="cTA" prefWidth="65.33331298828125" text="TA" />
+                  <TableColumn fx:id="cWTA" prefWidth="94.00003051757812" text="WTA" />
                </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
             </TableView>
-            <Button fx:id="readFileBtn" layoutX="598.0" layoutY="112.0" mnemonicParsing="false" onAction="#readFileAction" prefHeight="35.0" prefWidth="93.0" text="Browse" />
-            <Button fx:id="generate" layoutX="598.0" layoutY="160.0" mnemonicParsing="false" onAction="#GenerateAction" prefHeight="35.0" prefWidth="93.0" text="Generate" />
-            <Button fx:id="runBtn" layoutX="205.0" layoutY="426.0" mnemonicParsing="false" onAction="#runAlgoAction" prefHeight="38.0" prefWidth="129.0" text="Run" />
-            <Button fx:id="exit" layoutX="580.0" layoutY="426.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="38.0" prefWidth="129.0" text="Exit" />
-            <Label layoutX="205.0" layoutY="28.0" prefHeight="47.0" prefWidth="299.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
+            <Button fx:id="readFileBtn" layoutX="642.0" layoutY="103.0" mnemonicParsing="false" onAction="#readFileAction" prefHeight="35.0" prefWidth="93.0" style="-fx-background-color: #00FFFF;" stylesheets="@../Style/Style.css" text="Browse">
+               <effect>
+                  <InnerShadow />
+               </effect></Button>
+            <Button fx:id="generate" layoutX="642.0" layoutY="156.0" mnemonicParsing="false" onAction="#GenerateAction" prefHeight="35.0" prefWidth="93.0" style="-fx-background-color: #00FFFF;" stylesheets="@../Style/Style.css" text="Generate">
+               <effect>
+                  <InnerShadow />
+               </effect></Button>
+            <Button fx:id="runBtn" layoutX="290.0" layoutY="464.0" mnemonicParsing="false" onAction="#runAlgoAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #00FF00;" stylesheets="@../Style/Style.css" text="Run">
+               <effect>
+                  <InnerShadow height="78.32" radius="19.08" width="0.0" />
+               </effect></Button>
+            <Button fx:id="exit" layoutX="607.0" layoutY="464.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #ff0000;" stylesheets="@../Style/Style.css" text="Exit">
+               <effect>
+                  <InnerShadow choke="0.17" color="#804738" height="13.35" radius="2.8375" width="0.0" />
+               </effect></Button>
+            <Label layoutX="197.0" layoutY="26.0" prefHeight="49.0" prefWidth="253.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
                <font>
                   <Font name="Comic Sans MS Bold" size="18.0" />
                </font>
@@ -51,41 +77,11 @@
                      </stops>
                   </RadialGradient>
                </textFill>
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
             </Label>
-            <RadioButton fx:id="PradioButton" layoutX="359.0" layoutY="381.0" mnemonicParsing="false" onAction="#PButton" text="priority / p">
-               <textFill>
-                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
-                     <stops>
-                        <Stop color="#f2f0f0" />
-                        <Stop color="#00deff" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </textFill>
-               <toggleGroup>
-                  <ToggleGroup fx:id="algo" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="SJFradioButton" layoutX="280.0" layoutY="381.0" mnemonicParsing="false" onAction="#SJRButton" selected="true" text="SJF" toggleGroup="$algo">
-               <textFill>
-                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
-                     <stops>
-                        <Stop color="#f2f0f0" />
-                        <Stop color="#00deff" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </textFill>
-            </RadioButton>
-            <RadioButton fx:id="RRradioBtn" layoutX="185.0" layoutY="381.0" mnemonicParsing="false" onAction="#RRButton" text="RR" toggleGroup="$algo">
-               <textFill>
-                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
-                     <stops>
-                        <Stop color="#f2f0f0" />
-                        <Stop color="#00deff" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </textFill>
-            </RadioButton>
-            <Label layoutX="25.0" layoutY="329.0" prefHeight="25.0" prefWidth="64.0" text="average TA">
+            <Label layoutX="33.0" layoutY="340.0" prefHeight="25.0" prefWidth="64.0" text="average TA">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -98,7 +94,7 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <Label fx:id="TQlabel" layoutX="25.0" layoutY="423.0" prefHeight="17.0" prefWidth="93.0" text="Time Quatum :" visible="false">
+            <Label fx:id="TQlabel" layoutX="458.0" layoutY="361.0" prefHeight="17.0" prefWidth="93.0" text="Time Quatum :" visible="false">
                <font>
                   <Font size="14.0" />
                </font>
@@ -111,13 +107,19 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <TextField fx:id="TAtextArea" editable="false" layoutX="95.0" layoutY="329.0" prefHeight="25.0" prefWidth="64.0" />
-            <TextField fx:id="WTtextArea" editable="false" layoutX="261.0" layoutY="329.0" prefHeight="25.0" prefWidth="57.0" />
-            <TextField fx:id="WTAtextArea" editable="false" layoutX="437.0" layoutY="329.0" prefHeight="25.0" prefWidth="64.0" />
-            <TextField fx:id="TQtextArea" layoutX="128.0" layoutY="420.0" prefHeight="25.0" prefWidth="45.0" text="1" visible="false" />
-            <Button fx:id="refresh" layoutX="598.0" layoutY="205.0" mnemonicParsing="false" onAction="#RefreshAction" prefHeight="35.0" prefWidth="93.0" text="Refresh" />
-            <Button fx:id="delete" layoutX="598.0" layoutY="253.0" mnemonicParsing="false" onAction="#deleteAction" prefHeight="35.0" prefWidth="93.0" text="delete" />
-            <Label layoutX="185.0" layoutY="329.0" prefHeight="25.0" prefWidth="78.0" text="average WT">
+            <TextField fx:id="TAtextArea" editable="false" layoutX="129.0" layoutY="340.0" prefHeight="25.0" prefWidth="57.0" />
+            <TextField fx:id="WTtextArea" editable="false" layoutX="129.0" layoutY="383.0" prefHeight="25.0" prefWidth="57.0" />
+            <TextField fx:id="WTAtextArea" editable="false" layoutX="129.0" layoutY="432.0" prefHeight="25.0" prefWidth="57.0" />
+            <TextField fx:id="TQtextArea" layoutX="562.0" layoutY="358.0" prefHeight="25.0" prefWidth="45.0" text="1" visible="false" />
+            <Button fx:id="refresh" layoutX="642.0" layoutY="210.0" mnemonicParsing="false" onAction="#RefreshAction" prefHeight="35.0" prefWidth="93.0" style="-fx-background-color: #00FFFF;" stylesheets="@../Style/Style.css" text="Refresh">
+               <effect>
+                  <InnerShadow />
+               </effect></Button>
+            <Button fx:id="delete" layoutX="642.0" layoutY="263.0" mnemonicParsing="false" onAction="#deleteAction" prefHeight="35.0" prefWidth="93.0" style="-fx-background-color: #00FFFF;" stylesheets="@../Style/Style.css" text="delete">
+               <effect>
+                  <InnerShadow />
+               </effect></Button>
+            <Label layoutX="34.0" layoutY="383.0" prefHeight="25.0" prefWidth="78.0" text="average WT">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -130,7 +132,7 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <Label layoutX="355.0" layoutY="329.0" prefHeight="25.0" prefWidth="78.0" text="average WTA">
+            <Label layoutX="34.0" layoutY="432.0" prefHeight="25.0" prefWidth="78.0" text="average WTA">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -143,30 +145,18 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <Label layoutX="21.0" layoutY="377.0" prefHeight="25.0" prefWidth="147.0" text="Choose Algorithm :">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-               <textFill>
-                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
-                     <stops>
-                        <Stop color="#f2f0f0" />
-                        <Stop color="#00deff" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </textFill>
-            </Label>
-            <RadioButton fx:id="FCFSradioBtn" layoutX="474.0" layoutY="381.0" mnemonicParsing="false" onAction="#FCFSButton" text="FCFS" toggleGroup="$algo">
-               <textFill>
-                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
-                     <stops>
-                        <Stop color="#f2f0f0" />
-                        <Stop color="#00deff" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </textFill>
-            </RadioButton>
-            <Button fx:id="GantChart" layoutX="359.0" layoutY="426.0" mnemonicParsing="false" onAction="#GantChartAction" prefHeight="38.0" prefWidth="129.0" text="Gantt Chart" />
+            <Button fx:id="GantChart" layoutX="453.0" layoutY="464.0" mnemonicParsing="false" onAction="#GantChartAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #ffa230;" stylesheets="@../Style/Style.css" text="Gantt Chart">
+               <effect>
+                  <InnerShadow color="#8f0303" height="13.35" radius="2.8375" width="0.0" />
+               </effect></Button>
+            <ComboBox fx:id="algorithms" layoutX="458.0" layoutY="315.0" onAction="#Algorithm" prefWidth="150.0" promptText="Chose Algorithm">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <effect>
+                  <InnerShadow color="#8166e3" height="44.48" radius="17.54" width="27.68" />
+               </effect>
+            </ComboBox>
          </children>
       </AnchorPane>
    </children>

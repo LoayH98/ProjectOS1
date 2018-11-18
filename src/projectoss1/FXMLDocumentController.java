@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
@@ -113,7 +114,12 @@ public class FXMLDocumentController implements Initializable {
     
     private ObservableList<ProcessTable> List;
      
-   
+   @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        algorithms.getItems().addAll("RR","SJF","Priority","FCFS","SRTF","LCFS");
+    }   
+    
+    
     @FXML
     private void readFileAction(ActionEvent event) {
         
@@ -231,7 +237,77 @@ public class FXMLDocumentController implements Initializable {
         return ganttChart;
     }
       
+       public ArrayList<Integer> ShortestRemainingJobFirst(){ 
+       int time = 0;                               // current time
+       Process currentlyRunning = null;            // the process that is running currently, initially null
+       readyQueue = new ArrayList<Process>();      // ready queue to add arrived processes that are ready to run
+       ArrayList<Integer> ganttChart = new ArrayList<Integer>();   // Gantt Chart to show processes run-time
+       
+       while(!allProcessesFinished()){
+            checkProcessesArrival(time);    // check if any process has arriced at current moment
+            
+            
+            
+            if(currentlyRunning != null  && currentlyRunning.remainingTime != 0 )
+                currentlyRunning.remainingTime-- ;
+            
+             if(currentlyRunning != null && currentlyRunning.remainingTime == 0){    // if remaining running time for a currently running process is 0,
+                                                                                    // then this means that the process has finished  
+                currentlyRunning.finishTime = time;         // set finish time to current time
+                currentlyRunning.turnaround = currentlyRunning.finishTime - currentlyRunning.arrivalTime;   // compute turnaround time
+                currentlyRunning.waitingTime = currentlyRunning.turnaround - currentlyRunning.burstTime;    // compute waiting time
+
+                int currentlyRunningIdx = readyQueue.indexOf(currentlyRunning);  // get the index of currently running process
+                readyQueue.remove(currentlyRunningIdx);                         // remove this process from the readyQueue
+                currentlyRunning = null;
+
+                if (readyQueue.size() != 0){                                // if there still some processes in readyQueue to run
+                    currentlyRunning = findShortestRemaining(null) ;   /* get the process that is just after the last process finished (FCFS).
+                                                                                                       note that, this process's index = currentlyRunningIdx, because we 
+                                                                                                       removed an element from the arrayList, and indices have been shifted left */
+
+                    if(currentlyRunning != null && currentlyRunning.startTime == -1) // if the process has just started to run,
+                        currentlyRunning.startTime = time;                           // then set its start time to current time  
+                }  
+            }
+              if((currentlyRunning == null || findShortestRemaining(currentlyRunning).pid != currentlyRunning.pid ) && readyQueue.size() != 0){          // if there is no process running currently or a process has finished its timeQuantum
+                currentlyRunning = findShortestRemaining(currentlyRunning); // get the next process in readyQueue
+                /*
+                note: this line instead of the previous two made a very big mistake
+                    currentlyRunning = readyQueue.get( (i++) % readyQueue.size() );
+                */
+                                     // reset remainingTimeQuantum
+                
+                if(currentlyRunning != null && currentlyRunning.startTime == -1)// if the process has just started to run,
+                    currentlyRunning.startTime = time;                          // then set its start time to current time
+            }
+              
+              for(Process p : readyQueue)
+                if(p!= currentlyRunning && (time %3 == 0))
+                    p.priority++ ;
+              
+            addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            time++;         // increment time
+            
+       }
+       
+       return ganttChart ;
+    }
       
+        public Process findShortestRemaining(Process ShortestRemainingProcess){
+           if(ShortestRemainingProcess == null )
+               ShortestRemainingProcess = readyQueue.get(0);
+           
+           int time = ShortestRemainingProcess.remainingTime ;
+           for(Process p : readyQueue){
+               if (p.remainingTime < time ){
+                   time = p.remainingTime ;
+                   ShortestRemainingProcess = p ;
+               }
+           }
+           
+           return ShortestRemainingProcess ;
+        }
       
       
       public ArrayList<Integer> PrirorityWithP_and_Aging(){ 
@@ -302,8 +378,7 @@ public class FXMLDocumentController implements Initializable {
                    MostPriorityPorcess = p ;
                }
            }
-           
-           System.out.println("---------" +MostPriorityPorcess.pid+ "------------");
+          
            return MostPriorityPorcess ;
        }
     
@@ -440,6 +515,52 @@ public class FXMLDocumentController implements Initializable {
         
     }
     
+    
+     public ArrayList<Integer> LastComeFirstSevice(){
+        
+        int time = 0;                               // current time
+        Process currentlyRunning = null;            // the process that is running currently, initially null
+        readyQueue = new ArrayList<Process>();      // ready queue to add arrived processes that are ready to run
+        ArrayList<Integer> ganttChart = new ArrayList<Integer>();   // Gantt Chart to show processes run-time
+        
+        while(!allProcessesFinished()){     // while there are still unfinished processes
+            
+            checkProcessesArrival(time);    // check if any process has arriced at current moment
+            
+            if(currentlyRunning == null && readyQueue.size() !=0){               // if no process is running currently 
+                                   // and if it is in the queue
+                    currentlyRunning = readyQueue.remove(readyQueue.size()-1);     // remove it and run it
+                
+                if(currentlyRunning != null && currentlyRunning.startTime == -1)    // if there is a process has just started to run
+                    currentlyRunning.startTime = time;                              // set its start time to current time
+            }
+            
+            if(currentlyRunning != null && time == currentlyRunning.burstTime + currentlyRunning.startTime){    // if current time = burst time + start time for a currently running process,
+                                                                                                                // then this means that the process has finished
+                currentlyRunning.finishTime = time;         // set finish time to current time
+                currentlyRunning.turnaround = currentlyRunning.finishTime - currentlyRunning.arrivalTime;   // compute turnaround time
+                currentlyRunning.waitingTime = currentlyRunning.turnaround - currentlyRunning.burstTime;    // compute waiting time
+                currentlyRunning = null;
+                
+                /* starting another process, just at the same time the previous process has finished */
+               
+                if(readyQueue.size() != 0)
+                    currentlyRunning = readyQueue.remove(readyQueue.size()-1);     // remove it and run it
+                
+                if(currentlyRunning != null && currentlyRunning.startTime == -1)    // if there is a process has just started to run,
+                    currentlyRunning.startTime = time;                              // then set its start time to current time
+            }
+            
+            addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            time++;         // increment time
+        }
+        
+        return ganttChart;
+        
+    }
+     
+     
+    
     public void addToGanttChart(ArrayList<Integer> ganttChart, Process currentlyRunning){   // function to add a process's pid to Gantt Chart
         if (currentlyRunning != null)               // if there is a process running at the time the function has called
             ganttChart.add(currentlyRunning.pid);   // add this process's pid to Gantt Chart
@@ -471,10 +592,34 @@ public class FXMLDocumentController implements Initializable {
         return leastBurstTimeProcess;       // return the leastBurstTimeProcess
     }
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+     
+    
+    
+    @FXML
+    ComboBox algorithms ;
+    
+    @FXML
+    private void Algorithm (ActionEvent event ){
+        if(algorithms.getValue()== "RR"){
+          TQlabel.setVisible(true);
+          TQtextArea.setVisible(true);
+          TQtextArea.setText("1");
+           cpriority.setVisible(false);
+        }
+        else if(algorithms.getValue()== "Priority"){
+            TQlabel.setVisible(false);
+          TQtextArea.setVisible(false);
+          TQtextArea.setText("1");
+           cpriority.setVisible(true);
+        }
+        else {
+            TQlabel.setVisible(false);
+          TQtextArea.setVisible(false);
+          TQtextArea.setText("1");
+           cpriority.setVisible(false);
+        }
+            
+    }
     
     @FXML
     private void RRButton (ActionEvent event ){
@@ -527,21 +672,34 @@ public class FXMLDocumentController implements Initializable {
       ArrayList <Integer> chart  = new ArrayList<>();
 
          ////////////////////////////////////////////////////////////////////////SJF  
-        if(SJFradioButton.isSelected()){
+        if(algorithms.getValue() == "SJF"){
          chart = SJF();
         }
         
-        if(FCFSradioBtn.isSelected()){
+        else if(algorithms.getValue() == "FCFS"){
         chart = FirstComeFirstSevice();
         }
         
         ////////////////////////////////////////////////////////////////ROUND ROBEN
-        if(RRradioBtn.isSelected()){
+        else if(algorithms.getValue() == "RR"){
           chart = RR();
         }
         
-        if(PradioButton.isSelected()){
+        else if(algorithms.getValue() == "Priority"){
              chart = PrirorityWithP_and_Aging();
+        }
+        
+        else if(algorithms.getValue() == "LCFS"){
+             chart = LastComeFirstSevice();
+        }
+        
+        else if(algorithms.getValue() == "SRTF"){
+             chart = ShortestRemainingJobFirst();
+        }
+        
+        else {
+             JOptionPane.showMessageDialog(null, "Error!! Select an Algorithm Please !"); // show an error message
+               return ; 
         }
          
          
