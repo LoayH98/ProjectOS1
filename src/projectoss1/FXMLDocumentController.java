@@ -40,10 +40,12 @@ import javax.swing.JOptionPane;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class FXMLDocumentController implements Initializable {
+    Random rand = new Random(); 
     
     public  DecimalFormat numberFormat = new DecimalFormat("#.00"); 
      static ArrayList<Process> processes;
     static ArrayList<Process> readyQueue;
+    static ArrayList<Process> processes1;
     @FXML
     private Label label;
     
@@ -69,6 +71,9 @@ public class FXMLDocumentController implements Initializable {
     private RadioButton RRradioBtn;
 
     @FXML
+    private RadioButton FCFSradioBtn;
+     
+    @FXML
     private TextField WTtextArea;
 
     @FXML
@@ -81,7 +86,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label TQlabel ;
  
- 
+    @FXML
+    private TableColumn aa ;
+    
+    
     
     
     @FXML
@@ -100,6 +108,8 @@ public class FXMLDocumentController implements Initializable {
     private TableColumn<ProcessTable, String> cwaitTime;
     @FXML
     private TableColumn<ProcessTable, String> cWTA;
+    @FXML
+    private TableColumn<ProcessTable, String> cpriority;
     
     private ObservableList<ProcessTable> List;
      
@@ -145,6 +155,7 @@ public class FXMLDocumentController implements Initializable {
                 /* create a new process from the read data and add it immediately to the processes arrayList */
                 Process p1 = new Process(arrivalTime, burstTime, deadline);
                 p1.pid = processes.size();
+                p1.priority = rand.nextInt(5)+1 ; 
                 processes.add(p1);
               
         
@@ -152,7 +163,7 @@ public class FXMLDocumentController implements Initializable {
              
         
          for(int i =0 ; i<processes.size(); i++){
-             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(rand.nextInt(5)+1));
               List.add(t);
               }
             
@@ -163,6 +174,7 @@ public class FXMLDocumentController implements Initializable {
         cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
        cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
         cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+        cpriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
        //Table.setItems(null);
        Table.setItems(List);
             //, repeat, interval
@@ -220,21 +232,80 @@ public class FXMLDocumentController implements Initializable {
     }
       
       
-       public ArrayList<Integer> PrirorityWithP_and_Aging(){ 
+      
+      
+      public ArrayList<Integer> PrirorityWithP_and_Aging(){ 
        int time = 0;                               // current time
        Process currentlyRunning = null;            // the process that is running currently, initially null
        readyQueue = new ArrayList<Process>();      // ready queue to add arrived processes that are ready to run
        ArrayList<Integer> ganttChart = new ArrayList<Integer>();   // Gantt Chart to show processes run-time
        
        while(!allProcessesFinished()){
-          
             checkProcessesArrival(time);    // check if any process has arriced at current moment
             
+            
+            
+            if(currentlyRunning != null  && currentlyRunning.remainingTime != 0 )
+                currentlyRunning.remainingTime-- ;
+            
+             if(currentlyRunning != null && currentlyRunning.remainingTime == 0){    // if remaining running time for a currently running process is 0,
+                                                                                    // then this means that the process has finished  
+                currentlyRunning.finishTime = time;         // set finish time to current time
+                currentlyRunning.turnaround = currentlyRunning.finishTime - currentlyRunning.arrivalTime;   // compute turnaround time
+                currentlyRunning.waitingTime = currentlyRunning.turnaround - currentlyRunning.burstTime;    // compute waiting time
+
+                int currentlyRunningIdx = readyQueue.indexOf(currentlyRunning);  // get the index of currently running process
+                readyQueue.remove(currentlyRunningIdx);                         // remove this process from the readyQueue
+                currentlyRunning = null;
+
+                if (readyQueue.size() != 0){                                // if there still some processes in readyQueue to run
+                    currentlyRunning = findMostpriorityProcess(null) ;   /* get the process that is just after the last process finished (FCFS).
+                                                                                                       note that, this process's index = currentlyRunningIdx, because we 
+                                                                                                       removed an element from the arrayList, and indices have been shifted left */
+
+                    if(currentlyRunning != null && currentlyRunning.startTime == -1) // if the process has just started to run,
+                        currentlyRunning.startTime = time;                           // then set its start time to current time  
+                }  
+            }
+              if((currentlyRunning == null || findMostpriorityProcess(currentlyRunning).pid != currentlyRunning.pid ) && readyQueue.size() != 0){          // if there is no process running currently or a process has finished its timeQuantum
+                currentlyRunning = findMostpriorityProcess(currentlyRunning); // get the next process in readyQueue
+                /*
+                note: this line instead of the previous two made a very big mistake
+                    currentlyRunning = readyQueue.get( (i++) % readyQueue.size() );
+                */
+                                     // reset remainingTimeQuantum
+                
+                if(currentlyRunning != null && currentlyRunning.startTime == -1)// if the process has just started to run,
+                    currentlyRunning.startTime = time;                          // then set its start time to current time
+            }
+              
+              for(Process p : readyQueue)
+                if(p!= currentlyRunning && (time %3 == 0))
+                    p.priority++ ;
+              
+            addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            time++;         // increment time
             
        }
        
        return ganttChart ;
-    } 
+    }
+       
+       public Process findMostpriorityProcess(Process MostPriorityPorcess){
+           if(MostPriorityPorcess == null )
+               MostPriorityPorcess = readyQueue.get(0);
+           
+           int maxPriority = MostPriorityPorcess.priority ;
+           for(Process p : readyQueue){
+               if (p.priority > maxPriority ||( p.priority == maxPriority && p.pid > MostPriorityPorcess.pid )){
+                   maxPriority = p.priority ;
+                   MostPriorityPorcess = p ;
+               }
+           }
+           
+           System.out.println("---------" +MostPriorityPorcess.pid+ "------------");
+           return MostPriorityPorcess ;
+       }
     
     public ArrayList<Integer> RR(){
         int time = 0;                          // current time
@@ -325,6 +396,50 @@ public class FXMLDocumentController implements Initializable {
     }
 */
          
+    
+    public ArrayList<Integer> FirstComeFirstSevice(){
+        
+        int time = 0;                               // current time
+        Process currentlyRunning = null;            // the process that is running currently, initially null
+        readyQueue = new ArrayList<Process>();      // ready queue to add arrived processes that are ready to run
+        ArrayList<Integer> ganttChart = new ArrayList<Integer>();   // Gantt Chart to show processes run-time
+        
+        while(!allProcessesFinished()){     // while there are still unfinished processes
+            
+            checkProcessesArrival(time);    // check if any process has arriced at current moment
+            
+            if(currentlyRunning == null && readyQueue.size() !=0){               // if no process is running currently 
+                                   // and if it is in the queue
+                    currentlyRunning = readyQueue.remove(0);     // remove it and run it
+                
+                if(currentlyRunning != null && currentlyRunning.startTime == -1)    // if there is a process has just started to run
+                    currentlyRunning.startTime = time;                              // set its start time to current time
+            }
+            
+            if(currentlyRunning != null && time == currentlyRunning.burstTime + currentlyRunning.startTime){    // if current time = burst time + start time for a currently running process,
+                                                                                                                // then this means that the process has finished
+                currentlyRunning.finishTime = time;         // set finish time to current time
+                currentlyRunning.turnaround = currentlyRunning.finishTime - currentlyRunning.arrivalTime;   // compute turnaround time
+                currentlyRunning.waitingTime = currentlyRunning.turnaround - currentlyRunning.burstTime;    // compute waiting time
+                currentlyRunning = null;
+                
+                /* starting another process, just at the same time the previous process has finished */
+               
+                if(readyQueue.size() != 0)
+                    currentlyRunning = readyQueue.remove(0);     // remove it and run it
+                
+                if(currentlyRunning != null && currentlyRunning.startTime == -1)    // if there is a process has just started to run,
+                    currentlyRunning.startTime = time;                              // then set its start time to current time
+            }
+            
+            addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            time++;         // increment time
+        }
+        
+        return ganttChart;
+        
+    }
+    
     public void addToGanttChart(ArrayList<Integer> ganttChart, Process currentlyRunning){   // function to add a process's pid to Gantt Chart
         if (currentlyRunning != null)               // if there is a process running at the time the function has called
             ganttChart.add(currentlyRunning.pid);   // add this process's pid to Gantt Chart
@@ -366,12 +481,14 @@ public class FXMLDocumentController implements Initializable {
           TQlabel.setVisible(true);
           TQtextArea.setVisible(true);
           TQtextArea.setText("1");
+           cpriority.setVisible(false);
     }
     
      @FXML
     private void SJRButton (ActionEvent event ){
           TQlabel.setVisible(false);
           TQtextArea.setVisible(false);
+           cpriority.setVisible(false);
     }
     
     
@@ -379,6 +496,15 @@ public class FXMLDocumentController implements Initializable {
     private void PButton (ActionEvent event ){
           TQlabel.setVisible(false);
           TQtextArea.setVisible(false);
+           cpriority.setVisible(true);
+    }
+    
+     @FXML
+    private void FCFSButton (ActionEvent event ){
+          TQlabel.setVisible(false);
+          TQtextArea.setVisible(false);
+          TQtextArea.setText("1");
+           cpriority.setVisible(false);
     }
    /////////////////////////////////////////////////////////////////////////////////////Run 
 
@@ -397,151 +523,29 @@ public class FXMLDocumentController implements Initializable {
           p1.pid = p.pid ;
           copy.add(p1);
       }
+      
+      ArrayList <Integer> chart  = new ArrayList<>();
 
          ////////////////////////////////////////////////////////////////////////SJF  
-        if(SJFradioButton.isSelected())
-        {
-                ArrayList <Integer> chart = SJF();
- 
-  
-            for(int i =0 ; i<processes.size() ;i++){
-                processes.get(i).RL = null ;
-                processes.get(i).WL = null ;
-            }
-            
-                
-            
-       ///////////// CALCULATE WAITING , RUNING TIME
-        int  FirstArrive  =processes.get(0).arrivalTime ;
-         int index = 0 ;
-          for(int j=1;j<processes.size();j++){
-              if(processes.get(j).arrivalTime < FirstArrive ){
-                  FirstArrive = processes.get(j).arrivalTime ;
-                  index = j ; 
-              }
-          }
-           processes.get(index).WL = new ArrayList<> ();
-           processes.get(index).WL.add(new WaitingTime(0,0)); 
-            //System.out.println("w" + processes.get(index));
-           
+        if(SJFradioButton.isSelected()){
+         chart = SJF();
+        }
         
-          for(int i =0 ; i < chart.size()-1 ;i++){
-            if(chart.get(i)!= -1){
-                    if(processes.get(chart.get(i)).RL == null)
-                    {                    
-                       processes.get(chart.get(i)).RL =new ArrayList<>();
-                       processes.get(chart.get(i)).RL.add(new RuninngTime(i,i+processes.get(chart.get(i)).burstTime));
-                       
-                    }
-                   
-                    
-                    for(int j =0 ; j<processes.size() ; j++){
-                        if(j != chart.get(i)){
-                            
-                            if(processes.get(j).arrivalTime == i ){
-                                processes.get(j).WL = new ArrayList<> ();
-                                processes.get(j).WL.add(new WaitingTime(i,i+ processes.get(j).waitingTime));
-                                System.out.println("w" + processes.get(j));
-                            }
-                        }
-            }
-                    
-                   
-                    for(int j =0 ; j<processes.size() ; j++ ){
-                        if(processes.get(j).WL == null )
-                             processes.get(j).WL = new ArrayList<> ();
-                             processes.get(j).WL.add(new WaitingTime(0,0));
-                    }
-             
-              
-          }
-          }
-         
-          /*  System.out.println("-----------------------------");
-          for(int i=0;i<processes.size();i++){
-              if(processes.get(i).WL != null && processes.get(i).RL != null ){
-               System.out.println("Run procces #" + i + "-->" + processes.get(i).RL.get(0).startR + ",,"  +processes.get(i).RL.get(0).endR );
-               System.out.println("Wait procces #" + i + "-->" + processes.get(i).WL.get(0).startW + ",,"  +processes.get(i).WL.get(0).endW );
-               
-              }
-              
-               System.out.println("-----------------------------");
-          }
-          */
-          List = FXCollections.observableArrayList();
-          /*  for(int i =0 ; i<chart.size() ; i++ )
-            {
-                Process pp = null;
-                 
-                for(int j =0 ; j <processes.size() ; j++)
-                {
-                    if(processes.get(j).pid==chart.get(i))
-                    {
-                        pp = processes.get(j);
-                        break;
-                    }
-                    else 
-                        pp=processes.get(0);
-
-                }*/
-          
-          ///CALCULATE AVERAGES 
-          int i=0;
-          double TAavg=0.0 ,WTavg=0.0 ,WTAavg=0.0;
-          for( i=0 ; i<processes.size() ; i++ )
-          {
-              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
-              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
-              TAavg+=processes.get(i).turnaround;
-              WTavg+=processes.get(i).waitingTime;
-              WTAavg+=processes.get(i).weightTime;
-               ProcessTable p;
-                p = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(processes.get(i).finishTime),String.valueOf(processes.get(i).turnaround),String.valueOf(processes.get(i).waitingTime),String.valueOf(processes.get(i).weightTime));
-               List.add(p);
-            }
-          TAavg/=(i);
-          WTavg/=(i);
-          WTAavg/=(i);
-          
-          
-         
-          
-          TAavg = Double.valueOf(numberFormat.format(TAavg));
-          WTavg = Double.valueOf(numberFormat.format(WTavg));
-          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
-          
-          TAtextArea.setText(String.valueOf(TAavg));
-          WTtextArea.setText(String.valueOf(WTavg));
-          WTAtextArea.setText(String.valueOf(WTAavg));
-          
-          
-        
-        cpid.setCellValueFactory(new PropertyValueFactory<>("pid"));
-        carrivalTime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
-        cburstTime.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
-        cfinishTime.setCellValueFactory(new PropertyValueFactory<>("finishTime"));
-        cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
-       cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
-        cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
-       //Table.setItems(null);
-       Table.setItems(List);
-       
-       
-       GanttChartSample gantt = new GanttChartSample();
-         gantt.start(new Stage());
-         }
+        if(FCFSradioBtn.isSelected()){
+        chart = FirstComeFirstSevice();
+        }
         
         ////////////////////////////////////////////////////////////////ROUND ROBEN
         if(RRradioBtn.isSelected()){
-            
-            
-            
-            
-            
-            ////////////////////////GANTT CHART
-          ArrayList <Integer> chart = RR();
-       
-           for(int i =0 ; i<processes.size() ;i++){
+          chart = RR();
+        }
+        
+        if(PradioButton.isSelected()){
+             chart = PrirorityWithP_and_Aging();
+        }
+         
+         
+          for(int i =0 ; i<processes.size() ;i++){
                 processes.get(i).RL = new ArrayList<>() ;
                 processes.get(i).WL =  new ArrayList<>() ;
             }
@@ -592,7 +596,7 @@ public class FXMLDocumentController implements Initializable {
           ProcessTable p;
            processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
            processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
-          p = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(processes.get(i).finishTime),String.valueOf(processes.get(i).turnaround),String.valueOf(processes.get(i).waitingTime),String.valueOf(processes.get(i).weightTime));
+          p = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(processes.get(i).finishTime),String.valueOf(processes.get(i).turnaround),String.valueOf(processes.get(i).waitingTime),String.valueOf(processes.get(i).weightTime),String.valueOf(processes.get(i).priority));
               List.add(p);
               TAavg+=processes.get(i).turnaround;
               WTavg+=processes.get(i).waitingTime;
@@ -605,6 +609,7 @@ public class FXMLDocumentController implements Initializable {
         cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
        cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
         cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+         cpriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
        //Table.setItems(null);
        Table.setItems(List);
        
@@ -622,12 +627,15 @@ public class FXMLDocumentController implements Initializable {
           WTtextArea.setText(String.valueOf(WTavg));
           WTAtextArea.setText(String.valueOf(WTAavg));
        
-       GanttChartSample gantt = new GanttChartSample();
-         gantt.start(new Stage());
-         
-            
-        }
-        
+          
+          processes1 = new ArrayList<>();
+        for (Process p : processes){
+          Process p1 = new Process(p.arrivalTime,p.burstTime, p.deadline); ////////// COPY ORGIN PROCESSES
+          p1.pid = p.pid ;
+          p1.RL = p.RL ;
+          p1.WL = p.WL;
+          processes1.add(p1);
+      }
          
         
         processes.clear();
@@ -648,18 +656,19 @@ public class FXMLDocumentController implements Initializable {
         if(processes == null)
                processes = new ArrayList<Process>();   
 
-       Random rand = new Random(); 
+       
 
       
         Process p1 = new Process(rand.nextInt(20) , rand.nextInt(20)+1 , rand.nextInt(50));
         p1.pid = processes.size();
+        p1.priority = rand.nextInt(5)+1 ;
         
         processes.add(p1);
         
          List = FXCollections.observableArrayList();  
         
          for(int i =0 ; i<processes.size(); i++){
-             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(processes.get(i).priority));
               List.add(t);
               }
             
@@ -670,6 +679,7 @@ public class FXMLDocumentController implements Initializable {
         cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
        cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
         cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+         cpriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
        //Table.setItems(null);
        Table.setItems(List);
             //, repeat, interval
@@ -694,7 +704,7 @@ public class FXMLDocumentController implements Initializable {
         List = FXCollections.observableArrayList();  
         
          for(int i =0 ; i<processes.size(); i++){
-             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(processes.get(i).priority));
               List.add(t);
               }
             
@@ -705,6 +715,7 @@ public class FXMLDocumentController implements Initializable {
         cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
        cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
         cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+         cpriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
        //Table.setItems(null);
        Table.setItems(List);
             //, repeat, interval
@@ -717,10 +728,15 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public static ArrayList<Process> getProcesses() {
-        return processes;
+        return processes1;
     }
      
- 
+    @FXML
+    public void GantChartAction(ActionEvent event){
+     
+     GanttChartSample gantt = new GanttChartSample();
+         gantt.start(new Stage());
+    }
      
     @FXML
     Button delete ; 
@@ -732,7 +748,7 @@ public class FXMLDocumentController implements Initializable {
         List = FXCollections.observableArrayList();  
         
          for(int i =0 ; i<processes.size(); i++){
-             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0));
+             ProcessTable t = new ProcessTable(String.valueOf(processes.get(i).pid) , String.valueOf(processes.get(i).arrivalTime) ,String.valueOf(processes.get(i).burstTime ), String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(0),String.valueOf(processes.get(i).priority));
               List.add(t);
               }
             
@@ -743,6 +759,7 @@ public class FXMLDocumentController implements Initializable {
         cTA.setCellValueFactory(new PropertyValueFactory<>("TA"));
        cwaitTime.setCellValueFactory(new PropertyValueFactory<>("waitTime"));
         cWTA.setCellValueFactory(new PropertyValueFactory<>("WTA"));
+         cpriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
        //Table.setItems(null);
        Table.setItems(List);
             //, repeat, interval
@@ -755,6 +772,12 @@ public class FXMLDocumentController implements Initializable {
          }
      }
      
+     @FXML
+     Button GantChart ;
+     
+     
+    
+   
        
 }
 /// ready

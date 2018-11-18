@@ -13,6 +13,7 @@ public class Process {
     int turnaround;
     int waitingTime;
     double weightTime;
+    int priority ; 
    // int repeat;
     //int interval;
     int deadline;

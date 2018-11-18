@@ -12,6 +12,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 import static projectoss1.FXMLDocumentController.processes;
 import projectoss1.GanttChart.ExtraData;
 
@@ -24,6 +25,10 @@ public class GanttChartSample extends Application {
       
 
         ArrayList <Process> processes = FXMLDocumentController.getProcesses() ;
+        
+        if(processes == null)
+            JOptionPane.showMessageDialog(null, "Error!! There No Processes"); // show an error message
+        
          String[] process = new String[processes.size()];
         for(int i =0 ; i<processes.size() ;i++){
            process[i] = "Process #"+ i;

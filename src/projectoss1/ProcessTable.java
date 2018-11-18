@@ -32,9 +32,11 @@ public class ProcessTable {
     private final StringProperty TA;
     private final StringProperty waitTime;
     private final StringProperty WTA;
+    private final StringProperty priority;
+
     
 
-    public ProcessTable (String pid , String arrivalTime , String burstTime , String finishTime , String TA , String waitTime , String WTA ){
+    public ProcessTable (String pid , String arrivalTime , String burstTime , String finishTime , String TA , String waitTime , String WTA ,String priority ){
          this.pid = new SimpleStringProperty(pid);
          this.arrivalTime = new SimpleStringProperty(arrivalTime);
          this.burstTime = new SimpleStringProperty(burstTime);
@@ -42,6 +44,7 @@ public class ProcessTable {
          this.TA= new SimpleStringProperty(TA);
          this.waitTime = new SimpleStringProperty(waitTime);
          this.WTA = new SimpleStringProperty(WTA);
+         this.priority = new SimpleStringProperty(priority);
          
     }   
     
@@ -52,6 +55,15 @@ public class ProcessTable {
     public void setPid(String value){
         pid.set(value);
     }
+    
+     public String getPriority() {
+        return priority.get();
+    }
+    
+    public void setPriority(String value){
+        priority.set(value);
+    }
+
 
     public String getArrivalTime() {
         return arrivalTime.get();
