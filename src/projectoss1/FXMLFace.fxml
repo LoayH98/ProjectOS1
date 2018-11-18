@@ -65,7 +65,7 @@
                <effect>
                   <InnerShadow choke="0.17" color="#804738" height="13.35" radius="2.8375" width="0.0" />
                </effect></Button>
-            <Label layoutX="197.0" layoutY="26.0" prefHeight="49.0" prefWidth="253.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
+            <Label layoutX="218.0" layoutY="25.0" prefHeight="49.0" prefWidth="253.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
                <font>
                   <Font name="Comic Sans MS Bold" size="18.0" />
                </font>
@@ -157,6 +157,16 @@
                   <InnerShadow color="#8166e3" height="44.48" radius="17.54" width="27.68" />
                </effect>
             </ComboBox>
+            <ImageView fitHeight="38.0" fitWidth="57.0" layoutX="471.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@1d3b8e3c20793a25a32de080956cb41a.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="38.0" fitWidth="57.0" layoutX="158.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@1d3b8e3c20793a25a32de080956cb41a.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </children>
