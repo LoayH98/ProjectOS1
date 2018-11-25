@@ -33,6 +33,7 @@ public class ProjectOss1 extends Application {
      //   System.out.println("Start");
         Scene scene = new Scene(root);       
         stage.setScene(scene);
+        stage.setTitle("CPU Scheduling");
         stage.setResizable(false);
         stage.show();
     }

@@ -18,9 +18,9 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="521.0" prefWidth="763.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectoss1.FXMLDocumentController">
+<AnchorPane id="AnchorPane" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="548.0" prefWidth="776.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectoss1.FXMLDocumentController">
    <children>
-      <ImageView fitHeight="583.0" fitWidth="802.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="573.0" fitWidth="833.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../3.jpeg" />
          </image>
@@ -32,7 +32,7 @@
             </DropShadow>
          </effect>
       </ImageView>
-      <AnchorPane blendMode="HARD_LIGHT" layoutX="7.0" prefHeight="521.0" prefWidth="751.0">
+      <AnchorPane blendMode="HARD_LIGHT" layoutX="7.0" prefHeight="581.0" prefWidth="751.0">
          <children>
             <TableView fx:id="Table" layoutX="33.0" layoutY="93.0" prefHeight="216.0" prefWidth="574.0">
                <columns>
@@ -57,13 +57,13 @@
                <effect>
                   <InnerShadow />
                </effect></Button>
-            <Button fx:id="runBtn" layoutX="290.0" layoutY="464.0" mnemonicParsing="false" onAction="#runAlgoAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #00FF00;" stylesheets="@../Style/Style.css" text="Run">
+            <Button id="shiny-orange" fx:id="runBtn" layoutX="32.0" layoutY="487.0" mnemonicParsing="false" onAction="#runAlgoAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #00e600;" stylesheets="@Button.css" text="Run">
                <effect>
-                  <InnerShadow height="78.32" radius="19.08" width="0.0" />
+                  <InnerShadow color="#ec0707" height="3.5" radius="0.375" width="0.0" />
                </effect></Button>
-            <Button fx:id="exit" layoutX="607.0" layoutY="464.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #ff0000;" stylesheets="@../Style/Style.css" text="Exit">
+            <Button id="shiny-orange" fx:id="exit" layoutX="623.0" layoutY="487.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #ee3c00;" stylesheets="@Button.css" text="Exit">
                <effect>
-                  <InnerShadow choke="0.17" color="#804738" height="13.35" radius="2.8375" width="0.0" />
+                  <InnerShadow color="#ff0202" height="4.87" radius="0.7175" width="0.0" />
                </effect></Button>
             <Label layoutX="218.0" layoutY="25.0" prefHeight="49.0" prefWidth="253.0" text="CBU Scheduling Algorithms" textOverrun="CLIP">
                <font>
@@ -81,7 +81,7 @@
                   <Cursor fx:constant="DEFAULT" />
                </cursor>
             </Label>
-            <Label layoutX="33.0" layoutY="340.0" prefHeight="25.0" prefWidth="64.0" text="average TA">
+            <Label layoutX="33.0" layoutY="397.0" prefHeight="25.0" prefWidth="64.0" text="average TA">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -94,23 +94,10 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <Label fx:id="TQlabel" layoutX="458.0" layoutY="361.0" prefHeight="17.0" prefWidth="93.0" text="Time Quatum :" visible="false">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <textFill>
-                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
-                     <stops>
-                        <Stop color="#f2f0f0" />
-                        <Stop color="#00deff" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </textFill>
-            </Label>
-            <TextField fx:id="TAtextArea" editable="false" layoutX="129.0" layoutY="340.0" prefHeight="25.0" prefWidth="57.0" />
-            <TextField fx:id="WTtextArea" editable="false" layoutX="129.0" layoutY="383.0" prefHeight="25.0" prefWidth="57.0" />
-            <TextField fx:id="WTAtextArea" editable="false" layoutX="129.0" layoutY="432.0" prefHeight="25.0" prefWidth="57.0" />
-            <TextField fx:id="TQtextArea" layoutX="562.0" layoutY="358.0" prefHeight="25.0" prefWidth="45.0" text="1" visible="false" />
+            <TextField fx:id="TAtextArea" editable="false" layoutX="111.0" layoutY="397.0" prefHeight="25.0" prefWidth="78.0" />
+            <TextField fx:id="WTtextArea" editable="false" layoutX="312.0" layoutY="397.0" prefHeight="25.0" prefWidth="78.0" />
+            <TextField fx:id="WTAtextArea" editable="false" layoutX="529.0" layoutY="397.0" prefHeight="25.0" prefWidth="78.0" />
+            <TextField fx:id="TQtextArea" layoutX="312.0" layoutY="338.0" prefHeight="25.0" prefWidth="78.0" text="1" visible="false" />
             <Button fx:id="refresh" layoutX="642.0" layoutY="210.0" mnemonicParsing="false" onAction="#RefreshAction" prefHeight="35.0" prefWidth="93.0" style="-fx-background-color: #00FFFF;" stylesheets="@../Style/Style.css" text="Refresh">
                <effect>
                   <InnerShadow />
@@ -119,7 +106,7 @@
                <effect>
                   <InnerShadow />
                </effect></Button>
-            <Label layoutX="34.0" layoutY="383.0" prefHeight="25.0" prefWidth="78.0" text="average WT">
+            <Label layoutX="234.0" layoutY="397.0" prefHeight="25.0" prefWidth="78.0" text="average WT">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -132,7 +119,7 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <Label layoutX="34.0" layoutY="432.0" prefHeight="25.0" prefWidth="78.0" text="average WTA">
+            <Label layoutX="443.0" layoutY="397.0" prefHeight="25.0" prefWidth="78.0" text="average WTA">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -145,11 +132,11 @@
                   </RadialGradient>
                </textFill>
             </Label>
-            <Button fx:id="GantChart" layoutX="453.0" layoutY="464.0" mnemonicParsing="false" onAction="#GantChartAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #ffa230;" stylesheets="@../Style/Style.css" text="Gantt Chart">
+            <Button id="shiny-orange" fx:id="GantChart" layoutX="179.0" layoutY="487.0" mnemonicParsing="false" onAction="#GantChartAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #ffa230;" stylesheets="@Button.css" text="Gantt Chart">
                <effect>
-                  <InnerShadow color="#8f0303" height="13.35" radius="2.8375" width="0.0" />
+                  <InnerShadow color="RED" height="6.68" radius="1.17" width="0.0" />
                </effect></Button>
-            <ComboBox fx:id="algorithms" layoutX="458.0" layoutY="315.0" onAction="#Algorithm" prefWidth="150.0" promptText="Chose Algorithm">
+            <ComboBox fx:id="algorithms" layoutX="470.0" layoutY="319.0" onAction="#Algorithm" prefHeight="25.0" prefWidth="139.0" promptText="Chose Algorithm">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -167,6 +154,38 @@
                   <Image url="@1d3b8e3c20793a25a32de080956cb41a.png" />
                </image>
             </ImageView>
+            <Button id="shiny-orange" fx:id="BReport" layoutX="328.0" layoutY="487.0" mnemonicParsing="false" onAction="#OpenReportAction" prefHeight="38.0" prefWidth="129.0" style="-fx-background-color: #FFD700;" stylesheets="@Button.css" text="Report">
+               <effect>
+                  <InnerShadow color="RED" height="6.68" radius="1.17" width="0.0" />
+               </effect>
+            </Button>
+            <Label layoutX="31.0" layoutY="338.0" prefHeight="25.0" prefWidth="70.0" text="Time Limit">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <textFill>
+                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
+                     <stops>
+                        <Stop color="#f2f0f0" />
+                        <Stop color="#fff800" offset="1.0" />
+                     </stops>
+                  </RadialGradient>
+               </textFill>
+            </Label>
+            <TextField fx:id="timeLimit" layoutX="111.0" layoutY="338.0" prefHeight="25.0" prefWidth="78.0" promptText="Enter .." />
+            <Label fx:id="TQlabel" layoutX="227.0" layoutY="338.0" prefHeight="25.0" prefWidth="78.0" text="Time Quatum" visible="false">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <textFill>
+                  <RadialGradient centerX="0.4700123561211531" centerY="0.45373803803982266" focusDistance="-0.015503816826399008" radius="0.36821703947791773">
+                     <stops>
+                        <Stop color="#f2f0f0" />
+                        <Stop color="#fff800" offset="1.0" />
+                     </stops>
+                  </RadialGradient>
+               </textFill>
+            </Label>
          </children>
       </AnchorPane>
    </children>

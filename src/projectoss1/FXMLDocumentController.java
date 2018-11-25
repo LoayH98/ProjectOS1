@@ -6,7 +6,9 @@
 package projectoss1;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,12 +16,17 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -31,7 +38,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javax.swing.JOptionPane;
 
 /**
@@ -41,7 +50,11 @@ import javax.swing.JOptionPane;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class FXMLDocumentController implements Initializable {
+    
     Random rand = new Random(); 
+    Stage stage2;
+    Parent root2;
+    Scene scene2;
     
     public  DecimalFormat numberFormat = new DecimalFormat("#.00"); 
      static ArrayList<Process> processes;
@@ -90,7 +103,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TableColumn aa ;
     
+    @FXML
+    TextField timeLimit = new TextField() ;
     
+    int timeLim = -1 ;
     
     
     @FXML
@@ -114,10 +130,12 @@ public class FXMLDocumentController implements Initializable {
     
     private ObservableList<ProcessTable> List;
      
-   @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        algorithms.getItems().addAll("RR","SJF","Priority","FCFS","SRTF","LCFS");
-    }   
+  @Override
+    public void initialize(URL url, ResourceBundle rb) {  
+        
+      algorithms.getItems().addAll("RR","SJF","Priority","FCFS","SRTF","LCFS");
+      timeLimit.setText("");
+   }   
     
     
     @FXML
@@ -231,6 +249,16 @@ public class FXMLDocumentController implements Initializable {
             }
             
             addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            
+            if(timeLim != -1 && time == timeLim){
+                
+                if(currentlyRunning!=null){
+                    currentlyRunning.finishTime = -2 ;
+                }
+                break ;
+            }
+            
+            
             time++;         // increment time
         }
         
@@ -287,6 +315,14 @@ public class FXMLDocumentController implements Initializable {
                     p.priority++ ;
               
             addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            
+             if(timeLim != -1 && time == timeLim){
+                
+                if(currentlyRunning!=null){
+                    currentlyRunning.finishTime = -2 ;
+                }
+                break ;
+            }
             time++;         // increment time
             
        }
@@ -360,6 +396,14 @@ public class FXMLDocumentController implements Initializable {
                     p.priority++ ;
               
             addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            
+             if(timeLim != -1 && time == timeLim){
+                
+                if(currentlyRunning!=null){
+                    currentlyRunning.finishTime = -2 ;
+                }
+                break ;
+            }
             time++;         // increment time
             
        }
@@ -382,17 +426,38 @@ public class FXMLDocumentController implements Initializable {
            return MostPriorityPorcess ;
        }
     
+       public String getAlgorithm() {
+        return (String) algorithms.getValue();
+    }
+       
+      
+       
+        
+       
     public ArrayList<Integer> RR(){
-        int time = 0;                          // current time
+        int time = 0;                 
+        // current time
+        int timeQuantum = TQ.timeQ;
         Process currentlyRunning = null;       // the process that is running currently, initially null
-        int timeQuantum, remainingTimeQuantum; 
-        int i = 0;                             // index for readyQueue
+        int  remainingTimeQuantum; 
+        int i = 0;      
+        
+          System.out.println("TQ = " + timeQuantum);// index for readyQueue
         
         readyQueue = new ArrayList<Process>();                      // ready queue to add arrived processes that are ready to run
         ArrayList<Integer> ganttChart = new ArrayList<Integer>();   // Gantt Chart to show processes run-time
-
-        timeQuantum = Integer.valueOf(TQtextArea.getText()) ; // read timeQuantum from user
         
+       /* if(getAlgorithm() == "RR" ){
+        timeQuantum = Integer.valueOf(getTQ()); // read timeQuantum from user]
+            System.out.println("aaaaaaaaaaaa");
+        }
+        else {
+            timeQuantum =1 ;
+             System.out.println("AAAAA");
+        }*/
+   
+        
+      
         if (timeQuantum < 1){                          // if invalid input was entered
            JOptionPane.showMessageDialog(null, "Time Quantum Cannot be less than 1!");
             return null;
@@ -444,6 +509,14 @@ public class FXMLDocumentController implements Initializable {
             }
             
             addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            
+             if(timeLim != -1 && time == timeLim){
+                
+                if(currentlyRunning!=null){
+                    currentlyRunning.finishTime = -2 ;
+                }
+                break ;
+            }
             time++;         // increment time
         }
         
@@ -508,6 +581,13 @@ public class FXMLDocumentController implements Initializable {
             }
             
             addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+             if(timeLim != -1 && time == timeLim){
+                
+                if(currentlyRunning!=null){
+                    currentlyRunning.finishTime = -2 ;
+                }
+                break ;
+            }
             time++;         // increment time
         }
         
@@ -552,6 +632,14 @@ public class FXMLDocumentController implements Initializable {
             }
             
             addToGanttChart(ganttChart, currentlyRunning);          // add currently running process at the current moment to Gantt Chart
+            
+             if(timeLim != -1 && time == timeLim){
+                
+                if(currentlyRunning!=null){
+                    currentlyRunning.finishTime = -2 ;
+                }
+                break ;
+            }
             time++;         // increment time
         }
         
@@ -596,7 +684,7 @@ public class FXMLDocumentController implements Initializable {
     
     
     @FXML
-    ComboBox algorithms ;
+    ComboBox algorithms = new ComboBox();
     
     @FXML
     private void Algorithm (ActionEvent event ){
@@ -653,13 +741,12 @@ public class FXMLDocumentController implements Initializable {
     }
    /////////////////////////////////////////////////////////////////////////////////////Run 
 
-    public FXMLDocumentController() {
-    }
     @FXML
     private void runAlgoAction (ActionEvent event){
-        if(processes == null)
+        if(processes == null){
             JOptionPane.showMessageDialog(null, "Error!! There No Processes"); // show an error message
-    
+            return ;
+        }
 
        ArrayList<Process> copy = new ArrayList<>();
       
@@ -669,6 +756,8 @@ public class FXMLDocumentController implements Initializable {
           copy.add(p1);
       }
       
+        if(!timeLimit.getText().equals(""))timeLim = Integer.valueOf(timeLimit.getText());
+        else timeLim = -1 ;
       ArrayList <Integer> chart  = new ArrayList<>();
 
          ////////////////////////////////////////////////////////////////////////SJF  
@@ -682,6 +771,7 @@ public class FXMLDocumentController implements Initializable {
         
         ////////////////////////////////////////////////////////////////ROUND ROBEN
         else if(algorithms.getValue() == "RR"){
+            TQ.timeQ=Integer.valueOf(TQtextArea.getText());
           chart = RR();
         }
         
@@ -715,7 +805,7 @@ public class FXMLDocumentController implements Initializable {
                        if(chart.get(i) == j){
                            processes.get(j).RL.add(new RuninngTime(i, i+1));
                        }
-                       else if(processes.get(j).arrivalTime < i && processes.get(j).finishTime > i ) {
+                       else if(processes.get(j).arrivalTime < i && (processes.get(j).finishTime > i  || processes.get(j).finishTime == -1 || processes.get(j).finishTime == -2) ) {
                            processes.get(j).WL.add(new WaitingTime(i, i+1));
                        }
                    }
@@ -803,6 +893,7 @@ public class FXMLDocumentController implements Initializable {
           processes.add(p2);
       }
       
+        
     }
     
     
@@ -932,10 +1023,262 @@ public class FXMLDocumentController implements Initializable {
      
      @FXML
      Button GantChart ;
+     /////////////////////////////////////////////////////////////////////////////////////Report
      
+     @FXML Button colseReport;
+     @FXML TextArea Report ;
+     @FXML Button PrintReport ;
+     @FXML Button BReport ;
+
+     ArrayList<average> avgList = new ArrayList<>();
      
-    
-   
-       
+    @FXML
+    public  void closeButtonAction(){
+    // get a handle to the stage
+    Stage stage = (Stage) colseReport.getScene().getWindow();
+    // do what you have to do
+    stage.close();
 }
-/// ready
+
+
+    @FXML
+    public void OpenReportAction(ActionEvent event) throws IOException{
+         if(processes == null){
+            JOptionPane.showMessageDialog(null, "Error!! There No Processes"); // show an error message
+            return ;
+        }
+         try{
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Report.fxml"));
+            Parent root1 = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Report");
+            stage.setScene(new Scene(root1));  
+            stage.show();
+          }
+         catch(Exception e) {
+           e.printStackTrace();
+          }
+
+
+}
+    
+    @FXML 
+    public void printReport(){
+        
+        
+        avgList.clear();
+        double TAavg =0 , WTavg=0 , WTAavg =0 ; 
+        int i ; 
+        
+         ArrayList<Process> copy = new ArrayList<>();
+      
+      for (Process p : processes){
+          Process p1 = new Process(p.arrivalTime,p.burstTime, p.deadline); ////////// COPY ORGIN PROCESSES
+          p1.pid = p.pid ;
+          copy.add(p1);
+      }
+      
+      FirstComeFirstSevice();
+        TAavg =0 ;WTavg = 0 ; WTAavg =0 ;
+        for(i =0 ;i<processes.size() ; i++){
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+          
+          avgList.add(new average(TAavg, WTavg, WTAavg));
+          
+          System.out.println(TAavg +" " + WTavg + " " + WTAavg + "\n");
+        
+          
+         processes.clear();
+         for (Process p : copy){
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
+      }
+        ////////////////////////////////////////
+        
+         SJF();
+        TAavg =0 ;WTavg = 0 ; WTAavg =0 ;
+        for(i =0 ;i<processes.size() ; i++){
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+          
+          avgList.add(new average(TAavg, WTavg, WTAavg));
+        System.out.println(TAavg +" " + WTavg + " " + WTAavg + "\n");
+          
+         processes.clear();
+         for (Process p : copy){
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
+      }
+         
+         ///////////////////////////////////////
+          RR();
+         
+        TAavg =0 ;WTavg = 0 ; WTAavg =0 ;
+        for(i =0 ;i<processes.size() ; i++){
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+          
+          avgList.add(new average(TAavg, WTavg, WTAavg));
+        
+          System.out.println(TAavg +" " + WTavg + " " + WTAavg + "\n");
+         processes.clear();
+         for (Process p : copy){
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
+      }
+         
+         
+         ////////////////////////////////////////////
+          PrirorityWithP_and_Aging();
+        
+          TAavg =0 ;WTavg = 0 ; WTAavg =0 ;
+        for(i =0 ;i<processes.size() ; i++){
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+          
+          avgList.add(new average(TAavg, WTavg, WTAavg));
+        System.out.println(TAavg +" " + WTavg + " " + WTAavg + "\n");
+          
+         processes.clear();
+         for (Process p : copy){
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
+      }
+         
+         
+         //////////////////////////////////
+         
+          LastComeFirstSevice();
+        TAavg =0 ;WTavg = 0 ; WTAavg =0 ;
+        for(i =0 ;i<processes.size() ; i++){
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+           System.out.println(TAavg +" " + WTavg + " " + WTAavg + "\n");
+          avgList.add(new average(TAavg, WTavg, WTAavg));
+        
+          
+         processes.clear();
+         for (Process p : copy){
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
+      }
+         
+        
+         
+         
+         
+         
+          ShortestRemainingJobFirst();
+        TAavg =0 ;WTavg = 0 ; WTAavg =0 ;
+        for(i =0 ;i<processes.size() ; i++){
+              processes.get(i).weightTime = processes.get(i).turnaround / (double) processes.get(i).burstTime ;
+              processes.get(i).weightTime = Double.valueOf(numberFormat.format(processes.get(i).weightTime));
+              TAavg+=processes.get(i).turnaround;
+              WTavg+=processes.get(i).waitingTime;
+              WTAavg+=processes.get(i).weightTime;
+             }
+        
+          TAavg/=(i);
+          WTavg/=(i);
+          WTAavg/=(i);
+
+          TAavg = Double.valueOf(numberFormat.format(TAavg));
+          WTavg = Double.valueOf(numberFormat.format(WTavg));
+          WTAavg = Double.valueOf(numberFormat.format(WTAavg));
+           System.out.println(TAavg +" " + WTavg + " " + WTAavg + "\n");
+          avgList.add(new average(TAavg, WTavg, WTAavg));
+        
+          
+         processes.clear();
+         for (Process p : copy){
+             Process p2 = new Process(p.arrivalTime, p.burstTime, p.deadline);
+             p2.pid = p.pid ;
+          processes.add(p2);
+      }
+        
+       
+        
+        int x =0 ;
+        Report.setText("");
+        Report.setText(Report.getText() + "FCFS :\nAverage Time around : " + avgList.get(0).getAvgTA() + "  || Average waiting time : " + avgList.get(0).getAvgWT()+ "  || average waight time : " + avgList.get(0).getAvgWTA());
+         Report.setText(Report.getText() + "\n\nSJF :\nAverage Time around : " + avgList.get(1).getAvgTA() + "  || Average waiting time : " + avgList.get(1).getAvgWT() + "  || average waight time : " +avgList.get(1).getAvgWTA());
+         Report.setText(Report.getText() + "\n\nRR :\nAverage Time around : " +avgList.get(2).getAvgTA() + "  || Average waiting time : " + avgList.get(2).getAvgWT() + "  || average waight time : " + avgList.get(2).getAvgWTA());
+         Report.setText(Report.getText() + "\n\nPriority :\nAverage Time around : " + avgList.get(3).getAvgTA() + "  || Average waiting time : " + avgList.get(3).getAvgWT() + "  || average waight time : " + avgList.get(3).getAvgWTA());
+         Report.setText(Report.getText() + "\n\nLCFS :\nAverage Time around : " + avgList.get(4).getAvgTA() + "  || Average waiting time : " + avgList.get(4).getAvgWT() + "  || average waight time : " + avgList.get(4).getAvgWTA());
+         Report.setText(Report.getText() + "\n\nSRTF :\nAverage Time around : " + avgList.get(5).getAvgTA() + "  || Average waiting time : " + avgList.get(5).getAvgWT() + "  || average waight time : " + avgList.get(5).getAvgWTA());
+    
+    
+         avgList.clear();
+    }
+    
+    
+    
+    
+    
+}
